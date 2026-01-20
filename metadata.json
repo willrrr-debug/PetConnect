@@ -1,0 +1,9 @@
+{
+  "name": "PetConnect",
+  "description": "A comprehensive pet adoption and community platform featuring adoption listings, forums, and user profiles.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
