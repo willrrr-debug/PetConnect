@@ -1,32 +1,100 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { mockPosts } from '../data/posts';
+import { useApp } from '../context/AppContext';
+import { postService } from '../services/posts';
 import { Post } from '../types/post';
+import { getAvatarUrl } from '../utils/avatar';
 
 const PostDetailScreen: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
+    const { isMockMode, user } = useApp();
     const [post, setPost] = useState<Post | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeletePost = async () => {
+        if (!post || !id) return;
+        if (!window.confirm('确定要删除这条求助信息吗？')) return;
+
+        setIsDeleting(true);
+        const { error } = await postService.deletePost(id);
+        if (!error) {
+            alert('帖子已删除');
+            navigate('/forum');
+        } else {
+            alert('删除失败: ' + error.message);
+        }
+        setIsDeleting(false);
+    };
 
     useEffect(() => {
-        // 实际开发中这里应该从 API 获取数据
-        const foundPost = mockPosts.find(p => p.id === id);
-        if (foundPost) {
-            setPost(foundPost);
-        }
-    }, [id]);
+        const fetchPost = async () => {
+            if (!id) return;
+            setLoading(true);
+
+            if (isMockMode) {
+                const { mockPosts } = await import('../data/posts');
+                const foundPost = mockPosts.find(p => p.id === id);
+                if (foundPost) setPost(foundPost);
+            } else {
+                const { data, error } = await postService.getPostById(id);
+                if (data && !error) {
+                    const postData = data as any;
+                    // 映射数据库字段
+                    setPost({
+                        id: postData.id,
+                        authorId: postData.user_id,
+                        author: {
+                            id: postData.profiles?.id,
+                            name: postData.profiles?.name || '未知用户',
+                            avatar: postData.profiles?.avatar_url || 'https://via.placeholder.com/40',
+                            verified: postData.profiles?.verified || false
+                        },
+                        title: postData.title,
+                        content: postData.content,
+                        images: postData.image_url ? [postData.image_url] : (postData.images || []),
+                        location: {
+                            city: postData.location?.split(',')[0] || '',
+                            district: postData.location?.split(',')[1]?.trim() || ''
+                        },
+                        urgency: postData.is_emergency ? 'urgent' : 'normal',
+                        createdAt: new Date(postData.created_at).toLocaleDateString(),
+                        likes: 0,
+                        shares: 0
+                    } as any);
+                }
+            }
+            setLoading(false);
+        };
+
+        fetchPost();
+    }, [id, isMockMode]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     if (!post) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
-                <p className="text-text-muted">加载中...</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-background-light dark:bg-background-dark p-6 text-center">
+                <span className="material-symbols-outlined text-6xl text-gray-200 mb-4">article_off</span>
+                <h3 className="text-lg font-bold">该帖子已被删除或无法访问</h3>
+                <button onClick={() => navigate(-1)} className="mt-6 px-6 py-2 bg-primary text-white rounded-full">返回</button>
             </div>
         );
     }
 
     const handleContact = () => {
-        // 导航到聊天页面，带上用户ID
-        navigate(`/chat/${post.authorId}`);
+        if (post.authorId) {
+            navigate(`/chat/${post.authorId}`);
+        } else {
+            alert('发布者信息已失效');
+        }
     };
 
     return (
@@ -41,11 +109,17 @@ const PostDetailScreen: React.FC = () => {
                 </button>
                 <h1 className="text-lg font-bold truncate max-w-[200px]">帖子详情</h1>
                 <div className="flex gap-2">
+                    {user?.id === post?.authorId && (
+                        <button
+                            onClick={handleDeletePost}
+                            disabled={isDeleting}
+                            className="size-10 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
+                        >
+                            <span className="material-symbols-outlined">delete</span>
+                        </button>
+                    )}
                     <button className="size-10 rounded-full flex items-center justify-center text-text-main dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <span className="material-symbols-outlined">share</span>
-                    </button>
-                    <button className="size-10 rounded-full flex items-center justify-center text-text-main dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <span className="material-symbols-outlined">more_horiz</span>
                     </button>
                 </div>
             </div>
@@ -54,7 +128,7 @@ const PostDetailScreen: React.FC = () => {
                 {/* 用户信息 */}
                 <div className="px-4 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gray-200 bg-cover bg-center border border-gray-100 dark:border-gray-800" style={{ backgroundImage: `url('${post.author.avatar}')` }}></div>
+                        <div className="w-12 h-12 rounded-full bg-gray-200 bg-cover bg-center border border-gray-100 dark:border-gray-800" style={{ backgroundImage: `url('${getAvatarUrl(post.author.id, post.author.avatar)}')` }}></div>
                         <div>
                             <p className="text-base font-bold text-[#181411] dark:text-white leading-tight">
                                 {post.author.name}

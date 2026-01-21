@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { Database } from '../services/database.types';
+import { useApp } from '../context/AppContext';
 
 type Pet = Database['public']['Tables']['pets']['Row'];
 type Shelter = Database['public']['Tables']['shelters']['Row'];
@@ -9,30 +10,52 @@ type Shelter = Database['public']['Tables']['shelters']['Row'];
 const PetDetailScreen: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { user } = useApp();
   const [pet, setPet] = useState<Pet | null>(null);
   const [shelter, setShelter] = useState<Shelter | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeletePet = async () => {
+    if (!pet || !id) return;
+    if (!window.confirm('确定要撤回这条入库申请吗？')) return;
+
+    setIsDeleting(true);
+    const { error } = await supabase
+      .from('pets')
+      .delete()
+      .eq('id', id);
+
+    if (!error) {
+      alert('入库申请已撤回');
+      navigate('/home');
+    } else {
+      alert('撤回失败: ' + error.message);
+    }
+    setIsDeleting(false);
+  };
 
   useEffect(() => {
     const fetchPetDetails = async () => {
       if (!id) return;
       setLoading(true);
 
-      const { data: petData, error: petError } = await supabase
+      const { data: petData } = await supabase
         .from('pets')
         .select('*')
         .eq('id', id)
         .single();
 
       if (petData) {
-        setPet(petData);
-        if (petData.shelter_id) {
+        const typedPet = petData as Pet;
+        setPet(typedPet);
+        if (typedPet.shelter_id) {
           const { data: shelterData } = await supabase
             .from('shelters')
             .select('*')
-            .eq('id', petData.shelter_id)
+            .eq('id', typedPet.shelter_id)
             .single();
-          setShelter(shelterData);
+          setShelter(shelterData as Shelter);
         }
       }
       setLoading(false);
@@ -78,6 +101,15 @@ const PetDetailScreen: React.FC = () => {
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="flex gap-3">
+            {user?.id === pet?.user_id && (
+              <button
+                onClick={handleDeletePet}
+                disabled={isDeleting}
+                className="size-10 rounded-full bg-red-500/20 backdrop-blur-md border border-red-500/20 flex items-center justify-center text-white hover:bg-red-500/40 transition-colors disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined text-[20px]">delete</span>
+              </button>
+            )}
             <button className="size-10 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors">
               <span className="material-symbols-outlined">ios_share</span>
             </button>

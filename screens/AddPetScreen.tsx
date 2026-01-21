@@ -1,47 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPet } from '../services/pets';
+import { useApp } from '../context/AppContext';
 
 const AddPetScreen: React.FC = () => {
     const navigate = useNavigate();
+    const { user, isMockMode } = useApp();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [submitting, setSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        type: 'dog',
-        breed: '',
-        age: '',
-        gender: 'male',
-        description: '',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDNgVh4DJGy5DBClF4Ko4pufTG4XNUn05LjLauMrm98gcAJmjpGVMXR9msmyEG0TICn_4U7Gy-j_Jal0wNDgH-QYkICKC7N57GlcC1h4eU7yB_7F38RQPAGmW5E3LD7deIBIhZI53RY9e8RwJgQwtedtbuyEe3iGu0VwSEYSsUsZqkFwHCAHLmcUFsIaBiPcgFwHT8vFg1B9qi03G0KfJBzgoSwunMUIrz-WTUHyK-bRx9RBiNOAxSjPZHGeg1v7NboIMVJ4Zia_s', // Default placeholder
-        location: '',
-        contact: '',
-    });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setSubmitting(true);
+    const [name, setName] = useState('');
+    const [type, setType] = useState('dog');
+    const [breed, setBreed] = useState('');
+    const [age, setAge] = useState('');
+    const [gender, setGender] = useState('male');
+    const [description, setDescription] = useState('');
+    const [images, setImages] = useState<string[]>([]);
+    const [location, setLocation] = useState('');
+    const [contact, setContact] = useState('');
 
-        const { error } = await createPet({
-            name: formData.name,
-            type: formData.type,
-            breed: formData.breed,
-            age: formData.age,
-            gender: formData.gender,
-            description: formData.description,
-            image_url: formData.image_url,
-            status: 'pending' as any,
-        });
-
-        if (!error) {
-            setShowSuccess(true);
-            setTimeout(() => {
-                navigate('/home');
-            }, 2500);
-        } else {
-            alert('发布失败: ' + error);
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            Array.from(files).forEach((file: File) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const img = new Image();
+                    img.src = reader.result as string;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const MAX_WIDTH = 1024;
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx?.drawImage(img, 0, 0, width, height);
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        setImages(prev => [...prev, compressedBase64].slice(0, 9));
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
         }
-        setSubmitting(false);
+    };
+
+    const removeImage = (index: number) => {
+        setImages(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleSubmit = async () => {
+        if (!user) {
+            alert('请先登录后再提交申请');
+            navigate('/login');
+            return;
+        }
+
+        if (!name.trim() || images.length === 0) {
+            alert('请填写宠物名称并上传照片');
+            return;
+        }
+
+        if (isMockMode) {
+            setShowSuccess(true);
+            setTimeout(() => navigate('/home'), 2000);
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            const { error } = await createPet({
+                name,
+                type: type as any,
+                breed,
+                age,
+                gender: gender as any,
+                description,
+                image_url: images[0],
+                images: images,
+                status: 'pending' as any,
+                user_id: user.id
+            } as any);
+
+            if (!error) {
+                setShowSuccess(true);
+                setTimeout(() => {
+                    navigate('/home');
+                }, 2500);
+            } else {
+                console.error('Submit error:', error);
+                alert('提交失败: ' + (typeof error === 'string' ? error : '权限不足或网络错误'));
+            }
+        } catch (err: any) {
+            alert('发生错误: ' + err.message);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (showSuccess) {
@@ -76,32 +135,49 @@ const AddPetScreen: React.FC = () => {
             </header>
 
             <main className="flex-1 p-4 space-y-4 overflow-y-auto">
-                {/* 图片上传区域（简化） */}
                 <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-soft">
                     <div className="flex items-center justify-between mb-3">
                         <label className="font-bold text-gray-900 dark:text-white text-sm">宠物照片</label>
-                        <span className="text-xs text-gray-400">必填</span>
+                        <span className="text-xs text-gray-400">必填 ({images.length}/9)</span>
                     </div>
                     <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
-                        <div className="relative size-24 shrink-0 rounded-xl overflow-hidden group border border-gray-100 dark:border-gray-700">
-                            <img src={formData.image_url} alt="Pet preview" className="w-full h-full object-cover" />
-                        </div>
-                        <button className="size-24 shrink-0 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex flex-col items-center justify-center text-gray-400 gap-1 opacity-50 cursor-not-allowed">
+                        {images.map((img, index) => (
+                            <div key={index} className="relative size-24 shrink-0 rounded-xl overflow-hidden group border border-gray-100 dark:border-gray-700">
+                                <img src={img} alt="Pet preview" className="w-full h-full object-cover" />
+                                <button
+                                    onClick={() => removeImage(index)}
+                                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5"
+                                >
+                                    <span className="material-symbols-outlined text-[14px]">close</span>
+                                </button>
+                            </div>
+                        ))}
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="size-24 shrink-0 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex flex-col items-center justify-center text-gray-400 gap-1 active:bg-gray-100 transition-colors"
+                        >
                             <span className="material-symbols-outlined text-[28px]">add</span>
                             <span className="text-xs font-medium">添加更多</span>
                         </button>
+                        <input
+                            type="file"
+                            className="hidden"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            multiple
+                        />
                     </div>
                 </div>
 
-                {/* 基础信息 */}
                 <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-soft space-y-4">
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-gray-900 dark:text-white">宠物名称</label>
                         <input
                             type="text"
                             placeholder="给它起个名字吧"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             className="w-full bg-gray-50 dark:bg-gray-800/50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20"
                         />
                     </div>
@@ -110,8 +186,8 @@ const AddPetScreen: React.FC = () => {
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-gray-900 dark:text-white">类型</label>
                             <select
-                                value={formData.type}
-                                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                value={type}
+                                onChange={(e) => setType(e.target.value)}
                                 className="w-full bg-gray-50 dark:bg-gray-800/50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20"
                             >
                                 <option value="dog">狗狗</option>
@@ -123,14 +199,14 @@ const AddPetScreen: React.FC = () => {
                             <label className="text-sm font-bold text-gray-900 dark:text-white">性别</label>
                             <div className="flex bg-gray-50 dark:bg-gray-800/50 rounded-xl p-1">
                                 <button
-                                    onClick={() => setFormData({ ...formData, gender: 'male' })}
-                                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${formData.gender === 'male' ? 'bg-white dark:bg-card-dark text-primary shadow-sm' : 'text-gray-400'}`}
+                                    onClick={() => setGender('male')}
+                                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${gender === 'male' ? 'bg-white dark:bg-card-dark text-primary shadow-sm' : 'text-gray-400'}`}
                                 >
                                     男生
                                 </button>
                                 <button
-                                    onClick={() => setFormData({ ...formData, gender: 'female' })}
-                                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${formData.gender === 'female' ? 'bg-white dark:bg-card-dark text-pink-500 shadow-sm' : 'text-gray-400'}`}
+                                    onClick={() => setGender('female')}
+                                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${gender === 'female' ? 'bg-white dark:bg-card-dark text-pink-500 shadow-sm' : 'text-gray-400'}`}
                                 >
                                     女生
                                 </button>
@@ -144,8 +220,8 @@ const AddPetScreen: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="如：金毛、橘猫"
-                                value={formData.breed}
-                                onChange={(e) => setFormData({ ...formData, breed: e.target.value })}
+                                value={breed}
+                                onChange={(e) => setBreed(e.target.value)}
                                 className="w-full bg-gray-50 dark:bg-gray-800/50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
@@ -154,8 +230,8 @@ const AddPetScreen: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="如：2岁、6个月"
-                                value={formData.age}
-                                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                                value={age}
+                                onChange={(e) => setAge(e.target.value)}
                                 className="w-full bg-gray-50 dark:bg-gray-800/50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
@@ -165,14 +241,13 @@ const AddPetScreen: React.FC = () => {
                         <label className="text-sm font-bold text-gray-900 dark:text-white">详情描述</label>
                         <textarea
                             placeholder="请描述宠物的健康状况、性格特征及救助经过..."
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                             className="w-full bg-gray-50 dark:bg-gray-800/50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 min-h-[120px] resize-none"
                         ></textarea>
                     </div>
                 </div>
 
-                {/* 地点与联系方式 */}
                 <div className="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-soft divide-y divide-gray-50 dark:divide-gray-800">
                     <div className="flex items-center justify-between p-4">
                         <div className="flex items-center gap-3.5 shrink-0">
@@ -184,8 +259,8 @@ const AddPetScreen: React.FC = () => {
                         <input
                             type="text"
                             placeholder="点击选择位置"
-                            value={formData.location}
-                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
                             className="flex-1 bg-transparent border-none text-right text-gray-900 dark:text-white placeholder-gray-400 focus:ring-0 p-0 ml-4 text-sm font-medium"
                         />
                     </div>
@@ -199,8 +274,8 @@ const AddPetScreen: React.FC = () => {
                         <input
                             type="text"
                             placeholder="手机号 / 微信号"
-                            value={formData.contact}
-                            onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                            value={contact}
+                            onChange={(e) => setContact(e.target.value)}
                             className="flex-1 bg-transparent border-none text-right text-gray-900 dark:text-white placeholder-gray-400 focus:ring-0 p-0 ml-4 text-sm font-medium"
                         />
                     </div>

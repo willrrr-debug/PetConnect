@@ -60,5 +60,16 @@ export const postService = {
             .single();
 
         return { data, error };
+    },
+    /**
+     * 删除帖子
+     */
+    async deletePost(id: string) {
+        const { error } = await supabase
+            .from('posts')
+            .delete()
+            .eq('id', id);
+
+        return { error };
     }
 };

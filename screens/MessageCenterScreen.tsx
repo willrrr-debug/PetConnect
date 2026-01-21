@@ -18,9 +18,7 @@ const MessageCenterScreen: React.FC = () => {
               </button>
               <h1 className="text-[28px] font-bold leading-tight tracking-tight text-text-main-light dark:text-text-main-dark">消息中心</h1>
             </div>
-            <button className="flex items-center justify-center rounded-full p-2 text-text-main-light dark:text-text-main-dark hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              <span className="material-symbols-outlined text-[28px]">edit_square</span>
-            </button>
+            <div className="flex-1" />
           </div>
           <div className="w-full">
             <label className="flex flex-col h-12 w-full">
@@ -39,7 +37,7 @@ const MessageCenterScreen: React.FC = () => {
             className="group flex items-center gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-3 pr-4 shadow-sm hover:bg-gray-50 dark:hover:bg-[#1e2a30] transition-colors cursor-pointer"
           >
             <div className="relative shrink-0">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14 border-2 border-transparent group-hover:border-primary/20 transition-colors" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDMjMgySDEP8OcmEfL0vs6qML5NYZsyRYy9SmUAd_iwRgEvOlYRokUcDwt-AAdoj5eb36sgG-XZ6q8FMcivrnc7hjvtJN_TndeJKGcyxEdAfcInRzGd-m2GAGiFjQRy4JPjn8soh1B2BpuRQhS5g6Edl7iUUhZcvN8VJW-ZLKncoGvz_Y_7RogLkl2kjxURIks1I3Bxg9Dh5IfCYaW6pPg5K0wPmnc44vF2pf6SaNmNRRBRZqin25j0OV6l9fAmPoLJVFLpzyYChBY')" }}></div>
+              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14 border-2 border-transparent group-hover:border-primary/20 transition-colors" style={{ backgroundImage: "url('https://images.weserv.nl/?url=images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=200&fit=crop')" }}></div>
               <div className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-[#10b981] border-2 border-white dark:border-[#19252b]"></div>
             </div>
             <div className="flex flex-1 flex-col justify-center min-w-0">
@@ -59,7 +57,7 @@ const MessageCenterScreen: React.FC = () => {
           {/* Message 2 */}
           <div className="group flex items-center gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-3 pr-4 shadow-sm hover:bg-gray-50 dark:hover:bg-[#1e2a30] transition-colors cursor-pointer">
             <div className="relative shrink-0">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDDGB78QcUXZzVxMcxeQ3ag3J09pNLHeNIGwat8RbyfBU1izWb46gRw2xupO7E4ovbCazALbjTqkKbNKniUW0pY762dU4AvGOKPnfmAV8DIAONys8wnHmQASFI49Cw0pbyU50SE9di8SsVnKbHz3phOLzmAoEuQ11pZB7PuEn33busWpsHnHB2Vnga5ic0PbFeLm3BNdzma7tX2mixEUckz1oLc7TAqHcVKQNLw6mXhYhRky9O1BF39x_WApn2c5iMOWqZlMazoSHQ')" }}></div>
+              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://images.weserv.nl/?url=images.unsplash.com/photo-1543466835-00a7907e9de1?w=200&h=200&fit=crop')" }}></div>
             </div>
             <div className="flex flex-1 flex-col justify-center min-w-0">
               <div className="flex items-center justify-between mb-0.5">
@@ -75,7 +73,7 @@ const MessageCenterScreen: React.FC = () => {
           {/* Message 3 */}
           <div className="group flex items-center gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-3 pr-4 shadow-sm hover:bg-gray-50 dark:hover:bg-[#1e2a30] transition-colors cursor-pointer">
             <div className="relative shrink-0">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuC1BzsX-Qencz0ME4xpVodu-c9-xee8NlN8GyjT5mPUNsUPgJknFyhUt7KCGQB2dJOhzVDqwyDdvJl9aHBQQKInE7_hlvuIccwqOp_UBPBGRJZYcUBzMORDVCV16AYXdy75uyrykbPUxMCMcFTSnh4xjhqRDqxRqrtU57RpWyV0Mv12I_cUiBwpgSiAUM1uMEgpp3D6JM6ovzPcqDx16ema_bN9JEL5C3xUwuSsifr1pq3A322koLaCEHHMoSxNt-jzoiD5wyfVJ74')" }}></div>
+              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://images.weserv.nl/?url=images.unsplash.com/photo-1583337130417-3346a1be7dee?w=200&h=200&fit=crop')" }}></div>
               <div className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-[#10b981] border-2 border-white dark:border-[#19252b]"></div>
             </div>
             <div className="flex flex-1 flex-col justify-center min-w-0">
@@ -95,7 +93,7 @@ const MessageCenterScreen: React.FC = () => {
           {/* Message 4 */}
           <div className="group flex items-center gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-3 pr-4 shadow-sm hover:bg-gray-50 dark:hover:bg-[#1e2a30] transition-colors cursor-pointer">
             <div className="relative shrink-0">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAjvNLhniePTT5VWX5Ura1JEWea2-6XIeWmgpHpyJgqfuZkbIFO86l8DGNy55q7cW3rvTlZN9fbV-4nChBMyXjB3yKisf-U4OzTpoWqPzbwy-az78_cyX9JvjcelXTSLLflwCtiu4VnxAPy5ymUFoKGhHMKLQEpRvY4iTw4WC7D8p3f5ulHR17FLydZbRzaKO8C1EMQroJ6Rb-aEOUK8AVYTAa3hZ2-BbSXVHz9gLvAyNjSfbVYVLYmAxff8rbGKrTzKFHT7UN_pCc')" }}></div>
+              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://images.weserv.nl/?url=images.unsplash.com/photo-1591193520707-39446d7e6d24?w=200&h=200&fit=crop')" }}></div>
             </div>
             <div className="flex flex-1 flex-col justify-center min-w-0">
               <div className="flex items-center justify-between mb-0.5">
@@ -111,7 +109,7 @@ const MessageCenterScreen: React.FC = () => {
           {/* Message 5 */}
           <div className="group flex items-center gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-3 pr-4 shadow-sm hover:bg-gray-50 dark:hover:bg-[#1e2a30] transition-colors cursor-pointer">
             <div className="relative shrink-0">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBVAWLhFTiMgEYKjRuaGXJ0_kR1_5UpQB3kVZiLO_MLoDiBXCf2N27rWAekyAAYaXwluRh6qGWjMiTs89tihxVaUvbvBOORzk7tbmP-9L2EZMUQlsfryhADnM5kJpCySHqbL7GlN7YqJdrn1usJllQ6mNLXJVD-YSYMrBIBZlpc0inL9c2wFPArPaLxzp1P_tE82XSMyoHDD1JTgOHzuVAFHIxNQBiEqTIlWjNysNupldilxpy1-WnPUTYeU3D73tDdN_9AjUTjcs4')" }}></div>
+              <div className="bg-center bg-no-repeat bg-cover rounded-full h-14 w-14" style={{ backgroundImage: "url('https://images.weserv.nl/?url=images.unsplash.com/photo-1594149929911-78975a43d4f5?w=200&h=200&fit=crop')" }}></div>
             </div>
             <div className="flex flex-1 flex-col justify-center min-w-0">
               <div className="flex items-center justify-between mb-0.5">

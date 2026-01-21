@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context';
+import { getAvatarUrl } from '../utils/avatar';
 
 const EditProfileScreen: React.FC = () => {
     const navigate = useNavigate();
-    const [name, setName] = useState('Sarah Jenkins');
+    const { profile, user } = useApp();
+    const [name, setName] = useState(profile?.name || '萌宠用户');
     const [bio, setBio] = useState('宠物爱好者，希望能为更多流浪动物找到家。');
     const [location, setLocation] = useState('上海');
 
@@ -36,8 +39,8 @@ const EditProfileScreen: React.FC = () => {
                     {/* Avatar Edit */}
                     <div className="relative group cursor-pointer">
                         <div
-                            className="bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 shadow-lg ring-4 ring-white dark:ring-surface-dark transition-transform"
-                            style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5vLJ1OukI1OOSo8_LttlcZX5TjojtbZORPDBx6pG4xwoDQd3RbyxS972wzKw8epwV5tpPst1PmTkAwpSkx_C3FhzDMYecJ67W_MCs9krFjOkrfJHvfsh0OqmyhY-_gMB2F0Z73z2uihz0dJhwXYDJcHdxqxdYR-S2vuvtAGVBpK3GJlgXM90WI3G-Gc1lugWPwh8IRYrW1lVyoIkffQFUICC-gw_Jj9BfUpurP9aSKNmKmtYoCazxup-k2kgrzSyIeG4mV6Dnbf0')" }}
+                            className="bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 shadow-lg ring-4 ring-white dark:ring-surface-dark transition-transform bg-gray-100"
+                            style={{ backgroundImage: `url('${getAvatarUrl(profile?.id || user?.id, profile?.avatarUrl)}')` }}
                         >
                             <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>

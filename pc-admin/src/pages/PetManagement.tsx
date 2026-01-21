@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase, supabaseAdmin } from '../api/supabase';
 import { uploadToR2 } from '../services/r2';
-import { PawPrint, Plus, Edit2, Trash2, Search, Filter, Camera, X } from 'lucide-react';
+import { PawPrint, Plus, Edit2, Trash2, Search, Filter, Camera, X, Check, PlusCircle } from 'lucide-react';
 
 interface Pet {
     id: string;
@@ -19,16 +19,16 @@ interface Pet {
 
 const COMMON_BREEDS = {
     dog: ['金毛', '柴犬', '拉布拉多', '柯基', '比熊', '泰迪', '哈士奇', '边境牧羊犬', '萨摩耶', '中华田园犬'],
-    cat: ['暹罗猫', '英国短毛猫', '布偶猫', '波斯猫', '缅因猫', '橘猫', '狸花猫', '波斯猫', '美短'],
+    cat: ['暹罗猫', '英国短毛猫', '布偶猫', '波斯猫', '缅因猫', '橘猫', '狸花猫', '美短'],
     other: ['兔子', '小仓鼠', '龙猫']
 };
 
 const COMMON_AGES = ['3个月', '6个月', '12个月', '1岁', '1.5岁', '2岁', '3岁', '4岁', '5岁', '8岁+'];
 
 const HEALTH_OPTIONS = [
-    { id: '1', label: '已绝育', icon: 'check_circle', color: 'green' },
-    { id: '2', label: '已驱虫', icon: 'verified', color: 'purple' },
-    { id: '3', label: '已疫苗', icon: 'vaccines', color: 'orange' },
+    { id: 'vaccinated', label: '已疫苗', icon: 'vaccines', color: 'green' },
+    { id: 'neutered', label: '已绝育', icon: 'healing', color: 'purple' },
+    { id: 'dewormed', label: '已驱虫', icon: 'medication', color: 'orange' },
 ];
 
 const REQ_OPTIONS = ['有固定住所', '封闭阳台', '有养宠经验', '同意定期回访', '全家同意', '不离不弃'];
@@ -40,6 +40,10 @@ const PetManagement: React.FC = () => {
     const [editingPet, setEditingPet] = useState<any | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [extraBreeds, setExtraBreeds] = useState<Record<string, string[]>>({
+        dog: [], cat: [], other: []
+    });
+    const [extraAges, setExtraAges] = useState<string[]>([]);
 
     useEffect(() => {
         fetchPets();
@@ -109,6 +113,28 @@ const PetManagement: React.FC = () => {
             setEditingPet({ ...editingPet, requirements: current.filter((r: string) => r !== req) });
         } else {
             setEditingPet({ ...editingPet, requirements: [...current, req] });
+        }
+    };
+
+    const addCustomBreed = () => {
+        const breed = editingPet.breed?.trim();
+        if (!breed) return;
+        const type = editingPet.type as keyof typeof COMMON_BREEDS;
+        const all = [...COMMON_BREEDS[type], ...extraBreeds[type]];
+        if (!all.includes(breed)) {
+            setExtraBreeds(prev => ({
+                ...prev,
+                [type]: [...prev[type], breed]
+            }));
+        }
+    };
+
+    const addCustomAge = () => {
+        const age = editingPet.age?.trim();
+        if (!age) return;
+        const all = [...COMMON_AGES, ...extraAges];
+        if (!all.includes(age)) {
+            setExtraAges(prev => [...prev, age]);
         }
     };
 
@@ -326,16 +352,27 @@ const PetManagement: React.FC = () => {
                                     <div className="space-y-3">
                                         <label className="text-sm font-black text-text-main">是什么品种？</label>
                                         <div className="flex flex-wrap gap-2">
-                                            {COMMON_BREEDS[editingPet?.type as keyof typeof COMMON_BREEDS]?.map(breed => (
+                                            {[...COMMON_BREEDS[editingPet?.type as keyof typeof COMMON_BREEDS], ...extraBreeds[editingPet?.type as keyof typeof COMMON_BREEDS]].map(breed => (
                                                 <button key={breed} type="button" onClick={() => setEditingPet({ ...editingPet, breed })} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${editingPet?.breed === breed ? 'bg-primary text-white border-primary shadow-md' : 'bg-white border-gray-200 text-text-main hover:border-primary/50'
                                                     }`}>{breed}</button>
                                             ))}
-                                            <input
-                                                className="flex-1 min-w-[120px] bg-white rounded-xl px-4 py-2 text-xs font-bold border border-gray-200 outline-none focus:border-primary transition-all"
-                                                value={editingPet?.breed}
-                                                onChange={e => setEditingPet({ ...editingPet, breed: e.target.value })}
-                                                placeholder="手动输入品种..."
-                                            />
+                                            <div className="flex-1 min-w-[150px] relative">
+                                                <input
+                                                    className="w-full bg-white rounded-xl pl-4 pr-10 py-2 text-xs font-bold border border-gray-200 outline-none focus:border-primary transition-all"
+                                                    value={editingPet?.breed}
+                                                    onChange={e => setEditingPet({ ...editingPet, breed: e.target.value })}
+                                                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addCustomBreed())}
+                                                    placeholder="手动输入品种..."
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={addCustomBreed}
+                                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:scale-110 transition-transform"
+                                                    title="加入到标签列表"
+                                                >
+                                                    <PlusCircle size={16} />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -346,16 +383,27 @@ const PetManagement: React.FC = () => {
                                 <div className="space-y-4">
                                     <label className="text-sm font-black text-text-main">多大了？</label>
                                     <div className="flex flex-wrap gap-2">
-                                        {COMMON_AGES.map(age => (
+                                        {[...COMMON_AGES, ...extraAges].map(age => (
                                             <button key={age} type="button" onClick={() => setEditingPet({ ...editingPet, age })} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${editingPet?.age === age ? 'bg-primary text-white border-primary shadow-md' : 'bg-white border-gray-200 text-text-main hover:border-primary/50'
                                                 }`}>{age}</button>
                                         ))}
-                                        <input
-                                            className="flex-1 min-w-[100px] bg-white rounded-xl px-4 py-2 text-xs font-bold border border-gray-200 outline-none focus:border-primary transition-all"
-                                            value={editingPet?.age}
-                                            onChange={e => setEditingPet({ ...editingPet, age: e.target.value })}
-                                            placeholder="自定义年龄..."
-                                        />
+                                        <div className="flex-1 min-w-[130px] relative">
+                                            <input
+                                                className="w-full bg-white rounded-xl pl-4 pr-10 py-2 text-xs font-bold border border-gray-200 outline-none focus:border-primary transition-all"
+                                                value={editingPet?.age}
+                                                onChange={e => setEditingPet({ ...editingPet, age: e.target.value })}
+                                                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addCustomAge())}
+                                                placeholder="自定义年龄..."
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={addCustomAge}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:scale-110 transition-transform"
+                                                title="加入到标签列表"
+                                            >
+                                                <PlusCircle size={16} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 

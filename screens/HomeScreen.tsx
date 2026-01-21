@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from '../hooks/useLocation';
 import { useApp } from '../context/AppContext';
+import { getAvatarUrl } from '../utils/avatar';
 import { supabase } from '../services/supabase';
 import type { Pet } from '../types/pet';
 
 const HomeScreen: React.FC = () => {
   const navigate = useNavigate();
   const { city, loading } = useLocation('上海');
-  const { toggleFavorite, isFavorited } = useApp();
+  const { toggleFavorite, isFavorited, profile, user } = useApp();
   const [pets, setPets] = useState<Pet[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
@@ -62,7 +63,7 @@ const HomeScreen: React.FC = () => {
   const gridPets = pets.slice(3);
 
   return (
-    <div className="relative min-h-screen bg-[#FFF9F5] font-sans pb-24">
+    <div className="flex-1 h-full overflow-y-auto no-scrollbar pb-24 bg-[#FFF9F5] font-sans">
       {/* Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between px-6 pt-4 pb-3 bg-[#FFF9F5]/95 backdrop-blur-md">
         <div className="flex flex-col">
@@ -77,12 +78,24 @@ const HomeScreen: React.FC = () => {
         </div>
         <button
           onClick={() => navigate('/profile')}
-          className="w-11 h-11 rounded-full border-2 border-white shadow-md overflow-hidden hover:scale-105 transition-transform"
+          className="w-11 h-11 rounded-full border-2 border-white shadow-md overflow-hidden hover:scale-105 transition-transform bg-[#FFB8A3]/10 flex items-center justify-center"
         >
           <img
-            alt="User Profile"
+            alt="User"
             className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp10mn4GWYx15zN5FrUQWQ7eJZjwqfQFDu4bw4AM4W0h9S6hCIH-U5G2fztS_Q57q3JyVRuQld7HO-iGp0X7BYamB2Hovxg0Rn_z4U1dYmuPEpW9qPXWBkEvhSc4U-6-jTzgWVex0hnum3tvQ1o_31c_TMKGmfiUh4J9-ktSGyG9LnO_P5E_Kla26u5i5aZl2mEpZgd0KpgX_LCOpXktebwkNa7ev6DEvgmMRsTJr0OfZ5GcpvdxsJ_3kJ_mJB0a56jTH55DayptI"
+            src={getAvatarUrl(profile?.id || user?.id, profile?.avatarUrl)}
+            onError={(e) => {
+              // 如果图片加载失败，显示一个默认的渐变背景和文字
+              (e.target as HTMLImageElement).style.display = 'none';
+              const parent = (e.target as HTMLElement).parentElement;
+              if (parent) {
+                parent.classList.add('bg-gradient-to-br', 'from-[#FFB8A3]', 'to-[#FF9671]');
+                const span = document.createElement('span');
+                span.className = 'text-white text-xs font-bold';
+                span.innerText = profile?.name?.charAt(0).toUpperCase() || 'U';
+                parent.appendChild(span);
+              }
+            }}
           />
         </button>
       </header>

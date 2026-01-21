@@ -2,10 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/posts';
 import { useApp } from '../context/AppContext';
+import { getAvatarUrl } from '../utils/avatar';
 
 const ForumScreen: React.FC = () => {
   const navigate = useNavigate();
-  const { isMockMode } = useApp();
+  const { isMockMode, profile, user } = useApp();
   const [posts, setPosts] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [activeCategory, setActiveCategory] = React.useState('全部');
@@ -15,13 +16,13 @@ const ForumScreen: React.FC = () => {
     const { data, error } = await postService.getPosts(cat);
     if (!error && data) {
       // 将数据库字段映射为组件需要的格式
-      const mappedPosts = data.map(p => ({
+      const mappedPosts = (data as any[]).map(p => ({
         id: p.id,
         authorId: p.user_id,
         author: {
           id: p.profiles?.id,
           name: p.profiles?.name || '未知用户',
-          avatar: p.profiles?.avatar_url || 'https://via.placeholder.com/40',
+          avatar: p.profiles?.avatar_url || '',
           verified: p.profiles?.verified || false
         },
         title: p.title,
@@ -59,17 +60,20 @@ const ForumScreen: React.FC = () => {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark min-h-screen relative overflow-x-hidden text-[#181411] dark:text-[#f5f2f0] pb-24 font-display">
+    <div className="flex-1 h-full overflow-y-auto no-scrollbar pb-32 bg-background-light dark:bg-background-dark relative text-[#181411] dark:text-[#f5f2f0] font-display">
       <header className="sticky top-0 z-30 bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-between transition-colors duration-300">
         <h1 className="text-xl font-bold tracking-tight text-[#181411] dark:text-white">领养求助论坛</h1>
         <div className="flex items-center gap-3">
-          <button className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <button
+            onClick={() => navigate('/messages')}
+            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
             <span className="material-symbols-outlined text-[24px]">notifications</span>
           </button>
           <div
             onClick={() => navigate('/profile')}
-            className="h-9 w-9 rounded-full bg-cover bg-center border border-gray-200 dark:border-gray-700 cursor-pointer"
-            style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5vLJ1OukI1OOSo8_LttlcZX5TjojtbZORPDBx6pG4xwoDQd3RbyxS972wzKw8epwV5tpPst1PmTkAwpSkx_C3FhzDMYecJ67W_MCs9krFjOkrfJHvfsh0OqmyhY-_gMB2F0Z73z2uihz0dJhwXYDJcHdxqxdYR-S2vuvtAGVBpK3GJlgXM90WI3G-Gc1lugWPwh8IRYrW1lVyoIkffQFUICC-gw_Jj9BfUpurP9aSKNmKmtYoCazxup-k2kgrzSyIeG4mV6Dnbf0')" }}
+            className="h-9 w-9 rounded-full bg-cover bg-center border border-gray-200 dark:border-gray-700 cursor-pointer bg-gray-100"
+            style={{ backgroundImage: `url('${getAvatarUrl(profile?.id || user?.id, profile?.avatarUrl)}')` }}
           >
           </div>
         </div>
@@ -116,7 +120,7 @@ const ForumScreen: React.FC = () => {
             >
               <div className="px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center" style={{ backgroundImage: `url('${post.author.avatar}')` }}></div>
+                  <div className="w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center border border-gray-100 dark:border-gray-800" style={{ backgroundImage: `url('${getAvatarUrl(post.author.id, post.author.avatar)}')` }}></div>
                   <div>
                     <p className="text-sm font-bold text-[#181411] dark:text-white leading-tight">
                       {post.author.name}
@@ -175,15 +179,20 @@ const ForumScreen: React.FC = () => {
         </div>
       </main>
 
-      <button
-        onClick={() => navigate('/create-post')}
-        className="fixed bottom-24 right-5 z-40 h-14 bg-[#181411] dark:bg-primary text-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.2)] flex items-center pr-6 pl-4 gap-2 transition-transform hover:scale-105 active:scale-95 group"
-      >
-        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
-          <span className="material-symbols-outlined text-[20px]">add</span>
+      {/* 悬浮发帖按钮 - 改回 fixed，它会相对于 MobileLayout 容器固定 */}
+      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-40 px-5 pointer-events-none">
+        <div className="flex justify-end">
+          <button
+            onClick={() => navigate('/create-post')}
+            className="pointer-events-auto h-14 bg-[#181411] dark:bg-primary text-white rounded-full shadow-[0_12px_24px_rgba(0,0,0,0.3)] flex items-center pr-6 pl-4 gap-2 transition-all hover:scale-105 active:scale-95 group outline-none"
+          >
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+              <span className="material-symbols-outlined text-[20px]">add</span>
+            </div>
+            <span className="font-bold tracking-wide">发帖求助</span>
+          </button>
         </div>
-        <span className="font-bold tracking-wide">发帖求助</span>
-      </button>
+      </div>
     </div>
   );
 };

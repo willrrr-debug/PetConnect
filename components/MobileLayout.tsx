@@ -17,18 +17,18 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
                     relative 
                     w-full 
                     max-w-[430px] 
-                    min-h-screen 
+                    h-screen 
                     bg-background-light 
                     dark:bg-background-dark
                     shadow-2xl
                     flex
                     flex-col
+                    overflow-hidden
+                    transform
+                    translate-z-0
                 "
             >
-                {/* 滚动内容区域 */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar">
-                    {children}
-                </div>
+                {children}
             </div>
         </div>
     );
