@@ -54,8 +54,8 @@ const PetCard: React.FC<PetCardProps> = ({
                         <button
                             onClick={handleFavorite}
                             className={`flex h-6 w-6 items-center justify-center rounded-full backdrop-blur-md transition-colors ${isFavorited
-                                    ? 'bg-white text-red-500'
-                                    : 'bg-white/30 text-white hover:bg-white hover:text-red-500'
+                                ? 'bg-white text-red-500'
+                                : 'bg-white/30 text-white hover:bg-white hover:text-red-500'
                                 }`}
                         >
                             <span className={`material-symbols-outlined text-[14px] ${isFavorited ? 'filled' : ''}`}>
@@ -90,8 +90,8 @@ const PetCard: React.FC<PetCardProps> = ({
                     <button
                         onClick={handleFavorite}
                         className={`absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors ${isFavorited
-                                ? 'bg-white text-red-500'
-                                : 'bg-white/60 text-text-muted hover:bg-white hover:text-red-500'
+                            ? 'bg-white text-red-500'
+                            : 'bg-white/60 text-text-muted hover:bg-white hover:text-red-500'
                             }`}
                     >
                         <span className={`material-symbols-outlined text-[18px] ${isFavorited ? 'filled' : ''}`}>
@@ -110,8 +110,8 @@ const PetCard: React.FC<PetCardProps> = ({
                     <h4 className="text-lg font-bold text-text-main dark:text-white">{pet.name}</h4>
                     <div
                         className={`flex items-center rounded-md px-1.5 py-0.5 ${pet.gender === 'male'
-                                ? 'bg-blue-50 dark:bg-blue-900/30'
-                                : 'bg-pink-50 dark:bg-pink-900/30'
+                            ? 'bg-primary/10 dark:bg-primary/20'
+                            : 'bg-pink-50 dark:bg-pink-900/30'
                             }`}
                     >
                         <span

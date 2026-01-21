@@ -201,6 +201,70 @@ export interface Database {
                     created_at?: string;
                 };
             };
+            posts: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    title: string;
+                    content: string;
+                    image_url: string | null;
+                    images: string[] | null;
+                    location: string | null;
+                    category: string;
+                    is_emergency: boolean;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    title: string;
+                    content: string;
+                    image_url?: string | null;
+                    images?: string[] | null;
+                    location?: string | null;
+                    category?: string;
+                    is_emergency?: boolean;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    user_id?: string;
+                    title?: string;
+                    content?: string;
+                    image_url?: string | null;
+                    images?: string[] | null;
+                    location?: string | null;
+                    category?: string;
+                    is_emergency?: boolean;
+                    created_at?: string;
+                };
+            };
+            conversations: {
+                Row: {
+                    id: string;
+                    participant1_id: string;
+                    participant2_id: string;
+                    last_message: string | null;
+                    last_message_at: string;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    participant1_id: string;
+                    participant2_id: string;
+                    last_message?: string | null;
+                    last_message_at?: string;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    participant1_id?: string;
+                    participant2_id?: string;
+                    last_message?: string | null;
+                    last_message_at?: string;
+                    created_at?: string;
+                };
+            };
         };
     };
 }
@@ -210,7 +274,7 @@ interface HealthTag {
     id: string;
     label: string;
     icon: string;
-    color: 'green' | 'purple' | 'blue' | 'yellow' | 'red';
+    color: 'green' | 'purple' | 'blue' | 'yellow' | 'red' | 'orange';
 }
 
 interface PersonalInfo {

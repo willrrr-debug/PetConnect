@@ -1,203 +1,328 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from '../hooks/useLocation';
+import { useApp } from '../context/AppContext';
 
 const HomeScreen: React.FC = () => {
   const navigate = useNavigate();
   const { city, loading } = useLocation('上海');
+  const { toggleFavorite, isFavorited } = useApp();
+
+  const handleToggleFavorite = (e: React.MouseEvent, petId: string) => {
+    e.stopPropagation();
+    toggleFavorite(petId);
+  };
 
   return (
-    <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24 font-display">
-      <header className="flex items-center justify-between px-5 pt-4 pb-2 sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+    <div className="relative min-h-screen bg-[#FFF9F5] font-sans pb-24">
+      {/* Header */}
+      <header className="sticky top-0 z-20 flex items-center justify-between px-6 pt-4 pb-3 bg-[#FFF9F5]/95 backdrop-blur-md">
         <div className="flex flex-col">
-          <span className="text-text-muted dark:text-slate-400 text-[11px] font-medium tracking-wide">当前位置</span>
-          <div className="flex items-center gap-1 cursor-pointer">
-            <span className="text-primary material-symbols-outlined filled text-[18px]">location_on</span>
-            <h2 className="text-lg font-bold tracking-tight text-text-main dark:text-white">
+          <span className="text-[#A08E81] text-[11px] font-medium tracking-wide">当前位置</span>
+          <div className="flex items-center gap-1.5 cursor-pointer">
+            <span className="text-[#FFB8A3] text-lg">📍</span>
+            <h2 className="text-lg font-bold tracking-tight text-[#4A3728]">
               {loading ? '定位中...' : city}
             </h2>
-            <span className="text-text-muted material-symbols-outlined text-[18px]">expand_more</span>
+            <span className="text-[#A08E81] text-sm">▼</span>
           </div>
         </div>
         <button
           onClick={() => navigate('/profile')}
-          className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white dark:border-gray-700 shadow-sm"
+          className="w-11 h-11 rounded-full border-2 border-white shadow-md overflow-hidden hover:scale-105 transition-transform"
         >
-          <img alt="User Profile" className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp10mn4GWYx15zN5FrUQWQ7eJZjwqfQFDu4bw4AM4W0h9S6hCIH-U5G2fztS_Q57q3JyVRuQld7HO-iGp0X7BYamB2Hovxg0Rn_z4U1dYmuPEpW9qPXWBkEvhSc4U-6-jTzgWVex0hnum3tvQ1o_31c_TMKGmfiUh4J9-ktSGyG9LnO_P5E_Kla26u5i5aZl2mEpZgd0KpgX_LCOpXktebwkNa7ev6DEvgmMRsTJr0OfZ5GcpvdxsJ_3kJ_mJB0a56jTH55DayptI" />
+          <img
+            alt="User Profile"
+            className="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp10mn4GWYx15zN5FrUQWQ7eJZjwqfQFDu4bw4AM4W0h9S6hCIH-U5G2fztS_Q57q3JyVRuQld7HO-iGp0X7BYamB2Hovxg0Rn_z4U1dYmuPEpW9qPXWBkEvhSc4U-6-jTzgWVex0hnum3tvQ1o_31c_TMKGmfiUh4J9-ktSGyG9LnO_P5E_Kla26u5i5aZl2mEpZgd0KpgX_LCOpXktebwkNa7ev6DEvgmMRsTJr0OfZ5GcpvdxsJ_3kJ_mJB0a56jTH55DayptI"
+          />
         </button>
       </header>
 
-      <div className="px-5 py-2 relative z-0">
+      {/* Search Bar */}
+      <div className="px-6 py-3">
         <div
           onClick={() => navigate('/search')}
-          className="flex w-full items-center rounded-xl bg-white dark:bg-card-dark px-3 py-2.5 shadow-soft border border-transparent focus-within:border-primary/50 transition-all cursor-pointer"
+          className="flex items-center rounded-2xl bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/20 px-4 py-3.5 shadow-md hover:shadow-lg transition-all cursor-pointer"
         >
-          <span className="material-symbols-outlined text-text-muted text-[24px]">search</span>
-          <div className="flex-1 px-3 text-base font-medium text-text-muted">搜索品种、名字...</div>
-          <button className="flex items-center justify-center rounded-xl bg-primary/10 p-2">
-            <span className="material-symbols-outlined text-primary text-[20px]">tune</span>
+          <span className="text-[#A08E81] text-xl mr-3">🔍</span>
+          <div className="flex-1 text-base font-medium text-[#C4B5A0]">搜索品种、名字...</div>
+          <button className="flex items-center justify-center rounded-xl bg-gradient-to-br from-[#FFB8A3]/10 to-[#FF9671]/10 p-2.5">
+            <span className="text-[#FFB8A3] text-lg">⚙️</span>
           </button>
         </div>
       </div>
-      <div className="px-5 pb-4 pt-1">
+
+      {/* Application Banner */}
+      <div className="px-6 pb-4 pt-1">
         <button
           onClick={() => navigate('/add-pet')}
-          className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-primary to-accent p-3 shadow-md shadow-primary/20 transition-transform active:scale-98"
+          className="flex w-full items-center justify-between rounded-3xl bg-gradient-to-r from-[#FFB8A3] to-[#FF9671] p-4 shadow-xl shadow-[#FFB8A3]/30 active:scale-[0.98] transition-all group"
         >
           <div className="flex items-center gap-3 text-white">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md">
-              <span className="material-symbols-outlined text-[24px]">add_circle</span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md text-2xl">
+              ➕
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-base font-bold leading-tight">入库申请</span>
-              <span className="text-[10px] font-medium opacity-80">帮助流浪动物寻找温暖家园</span>
+              <span className="text-base font-bold">入库申请</span>
+              <span className="text-[11px] font-medium opacity-90">帮助流浪动物寻找温暖家园</span>
             </div>
           </div>
-          <span className="material-symbols-outlined text-white text-[20px]">chevron_right</span>
+          <span className="text-white text-xl group-hover:translate-x-1 transition-transform">→</span>
         </button>
       </div>
 
-      <div className="mt-1 flex flex-col gap-2">
-        <div className="flex items-center justify-between px-5">
-          <h3 className="text-lg font-bold text-text-main dark:text-white">最新入库 🐾</h3>
+      {/* Latest Pets Section - Card Swipe Style */}
+      <div className="mt-2 mb-8 flex flex-col gap-3">
+        <div className="flex items-center justify-between px-6">
+          <h3 className="text-xl font-bold text-[#4A3728]">最新入库</h3>
           <button
             onClick={() => navigate('/pets')}
-            className="text-sm font-bold text-primary hover:text-primary/80"
+            className="text-sm font-bold text-[#FFB8A3] hover:text-[#FF9671] transition-colors"
           >
             查看全部
           </button>
         </div>
-        <div className="flex overflow-x-auto no-scrollbar px-5 gap-3 pb-3 pt-1">
-          {/* Pet Item 1 */}
-          <div
-            onClick={() => navigate('/pet/1')}
-            className="relative h-44 w-32 flex-shrink-0 overflow-hidden rounded-3xl bg-gray-200 shadow-md group cursor-pointer"
-          >
-            <img alt="Golden Retriever" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiPoSXxeAmwXX64LAmWPvtmvbsfYt9pj4A7VCK0PHqER2A6IYXJzEJL-RJIrohMNZzbv9Xsh8Y_d4XQKJ2WSwIOR7aYAgDdi2l94womrJXF6mjO5ohxKeOaffDenloX1VwOmsb4O28pNhmWSrhkqrwiYsrubq51rPF_NU0QuR37JCYVtUZxbacrm1qzqC55XdLkU8063LgiDL4YUxYMiEwxEBUxvaQnNIW4mnO4rhW5xe-dJn7wEOtmYv9VnzDG9h7RjEln6fEd4o" />
-            <div className="absolute top-3 right-3">
-              <button className="flex h-6 w-6 items-center justify-center rounded-full bg-white/30 backdrop-blur-md text-white hover:bg-white hover:text-red-500 transition-colors">
-                <span className="material-symbols-outlined text-[14px]">favorite</span>
-              </button>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 pt-8">
-              <h4 className="text-xs font-bold text-white">巴弟</h4>
-              <p className="text-[10px] text-gray-200">金毛 · 2岁</p>
+
+        {/* Swipeable Card Container */}
+        <div className="relative px-6 h-[420px]">
+          {/* Card Stack */}
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Snap Scroll Container */}
+            <div className="flex overflow-x-scroll snap-x snap-mandatory w-full h-full no-scrollbar">
+              {/* Card 1 - Golden Retriever */}
+              <div className="snap-center shrink-0 w-full h-full flex items-center justify-center">
+                <div
+                  onClick={() => navigate('/pet/1')}
+                  className="relative w-full max-w-sm h-full overflow-hidden rounded-3xl shadow-2xl cursor-pointer group"
+                >
+                  <img
+                    alt="Golden Retriever"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiPoSXxeAmwXX64LAmWPvtmvbsfYt9pj4A7VCK0PHqER2A6IYXJzEJL-RJIrohMNZzbv9Xsh8Y_d4XQKJ2WSwIOR7aYAgDdi2l94womrJXF6mjO5ohxKeOaffDenloX1VwOmsb4O28pNhmWSrhkqrwiYsrubq51rPF_NU0QuR37JCYVtUZxbacrm1qzqC55XdLkU8063LgiDL4YUxYMiEwxEBUxvaQnNIW4mnO4rhW5xe-dJn7wEOtmYv9VnzDG9h7RjEln6fEd4o"
+                  />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+
+                  {/* Like Button */}
+                  <div className="absolute top-4 right-4 z-10">
+                    <button
+                      onClick={(e) => handleToggleFavorite(e, '1')}
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm hover:bg-white hover:scale-110 transition-all shadow-lg"
+                    >
+                      <span className={`text-2xl material-symbols-outlined ${isFavorited('1') ? 'text-red-500 filled' : 'text-gray-400'}`}>
+                        favorite
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Pet Info */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <h2 className="text-4xl font-black text-white mb-2">巴弟</h2>
+                        <div className="flex items-center gap-3 text-white/90 text-base mb-2">
+                          <span className="font-semibold">金毛猎犬</span>
+                          <span>·</span>
+                          <span className="font-semibold">2岁</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/80 text-sm">
+                          <span>📍</span>
+                          <span>距离您 1.2 km</span>
+                        </div>
+                      </div>
+                      <button className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#FFB8A3] to-[#FF9671] text-white shadow-xl hover:scale-105 transition-transform">
+                        <span className="text-2xl">→</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2 - Cat */}
+              <div className="snap-center shrink-0 w-full h-full flex items-center justify-center">
+                <div
+                  onClick={() => navigate('/pet/2')}
+                  className="relative w-full max-w-sm h-full overflow-hidden rounded-3xl shadow-2xl cursor-pointer group"
+                >
+                  <img
+                    alt="Cat"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuClKKZ73rFT8yg9ktxhuLkoRWh5Yx8bJFEDXC_J25ykpKp2QhVzolTg1iSo8gznQ33e4-INvZm0mQuDgpq5KqrzAw28eieJrseZaed2y4zBdzYeK0ttDfftC-FbD1qN_YSuaJdoRnTjXC6L9b30yxHjebYnx7_i2YHtvMy27EULFjyK7Nr7UECBGZyYZnga4HZFyKvPoYgMc0_Cw2sIx9nELPogJJBi6aBKiZkCEUqvTACvFQFAT3QAW2OwSutv98zHumQRMnRtBXk"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+
+                  <div className="absolute top-4 right-4 z-10">
+                    <button
+                      onClick={(e) => handleToggleFavorite(e, '2')}
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm hover:bg-white hover:scale-110 transition-all shadow-lg"
+                    >
+                      <span className={`text-2xl material-symbols-outlined ${isFavorited('2') ? 'text-red-500 filled' : 'text-gray-400'}`}>
+                        favorite
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <h2 className="text-4xl font-black text-white mb-2">米斯蒂</h2>
+                        <div className="flex items-center gap-3 text-white/90 text-base mb-2">
+                          <span className="font-semibold">虎斑猫</span>
+                          <span>·</span>
+                          <span className="font-semibold">8个月</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/80 text-sm">
+                          <span>📍</span>
+                          <span>距离您 0.8 km</span>
+                        </div>
+                      </div>
+                      <button className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#FFB8A3] to-[#FF9671] text-white shadow-xl hover:scale-105 transition-transform">
+                        <span className="text-2xl">→</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3 - Puppy */}
+              <div className="snap-center shrink-0 w-full h-full flex items-center justify-center">
+                <div
+                  onClick={() => navigate('/pet/3')}
+                  className="relative w-full max-w-sm h-full overflow-hidden rounded-3xl shadow-2xl cursor-pointer group"
+                >
+                  <img
+                    alt="Puppy"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6wkG4U1EoItUWIiHx3_Rf1uyQ7SKDjNu0qrAZjtNXNB48j3uLomQu_7w6m18z9UNve26gaFroDrWk6JPUw0c7UPOUEm4R94xUbeGtjoJoUMpHStL7eUX-Xq0LmeE3B2zSEsBEQSBEw-5bzdP7rw4MSp8WDzNTLFuT6J234t9-vWykzsG1xX90rLOQnaasJanYkb1lyLdE5kkHegy_78innrReH_MCLOKXtsYn6vAt_wEO_wQWef-IDyUPpKO1kdqDbHWuFDUDI1Q"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+
+                  <div className="absolute top-4 right-4 z-10">
+                    <button
+                      onClick={(e) => handleToggleFavorite(e, '3')}
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm hover:bg-white hover:scale-110 transition-all shadow-lg"
+                    >
+                      <span className={`text-2xl material-symbols-outlined ${isFavorited('3') ? 'text-red-500 filled' : 'text-gray-400'}`}>
+                        favorite
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <h2 className="text-4xl font-black text-white mb-2">黛西</h2>
+                        <div className="flex items-center gap-3 text-white/90 text-base mb-2">
+                          <span className="font-semibold">寻回犬</span>
+                          <span>·</span>
+                          <span className="font-semibold">4个月</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/80 text-sm">
+                          <span>📍</span>
+                          <span>距离您 2.1 km</span>
+                        </div>
+                      </div>
+                      <button className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#FFB8A3] to-[#FF9671] text-white shadow-xl hover:scale-105 transition-transform">
+                        <span className="text-2xl">→</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Pet Item 2 */}
-          <div className="relative h-44 w-32 flex-shrink-0 overflow-hidden rounded-3xl bg-gray-200 shadow-md group cursor-pointer">
-            <img alt="Cat" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClKKZ73rFT8yg9ktxhuLkoRWh5Yx8bJFEDXC_J25ykpKp2QhVzolTg1iSo8gznQ33e4-INvZm0mQuDgpq5KqrzAw28eieJrseZaed2y4zBdzYeK0ttDfftC-FbD1qN_YSuaJdoRnTjXK6L9b30yxHjebYnx7_i2YHtvMy27EULFjyK7Nr7UECBGZyYZnga4HZFyKvPoYgMc0_Cw2sIx9nELPogJJBi6aBKiZkCEUqvTACvFQFAT3QAW2OwSutv98zHumQRMnRtBXk" />
-            <div className="absolute top-3 right-3">
-              <button className="flex h-6 w-6 items-center justify-center rounded-full bg-white/30 backdrop-blur-md text-white hover:bg-white hover:text-red-500 transition-colors">
-                <span className="material-symbols-outlined text-[14px]">favorite</span>
-              </button>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 pt-8">
-              <h4 className="text-xs font-bold text-white">米斯蒂</h4>
-              <p className="text-[10px] text-gray-200">虎斑 · 8月</p>
-            </div>
+          {/* Swipe Indicators */}
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+            <div className="w-2 h-2 rounded-full bg-white/80 shadow-lg"></div>
+            <div className="w-2 h-2 rounded-full bg-white/40"></div>
+            <div className="w-2 h-2 rounded-full bg-white/40"></div>
           </div>
 
-          <div className="relative h-44 w-32 flex-shrink-0 overflow-hidden rounded-3xl bg-gray-200 shadow-md group cursor-pointer">
-            <img alt="Puppy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6wkG4U1EoItUWIiHx3_Rf1uyQ7SKDjNu0qrAZjtNXNB48j3uLomQu_7w6m18z9UNve26gaFroDrWk6JPUw0c7UPOUEm4R94xUbeGtjoJoUMpHStL7eUX-Xq0LmeE3B2zSEsBEQSBEw-5bzdP7rw4MSp8WDzNTLFuT6J234t9-vWykzsG1xX90rLOQnaasJanYkb1lyLdE5kkHegy_78innrReH_MCLOKXtsYn6vAt_wEO_wQWef-IDyUPpKO1kdqDbHWuFDUDI1Q" />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 pt-8">
-              <h4 className="text-xs font-bold text-white">黛西</h4>
-              <p className="text-[10px] text-gray-200">寻回犬 · 4月</p>
+          {/* Swipe Hint Text */}
+          <div className="absolute top-4 left-0 right-0 flex justify-center z-20">
+            <div className="bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full">
+              <p className="text-white text-xs font-medium">左右滑动查看更多</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-1 flex flex-col gap-3 px-5 pb-6">
+      {/* Adopt Me Section */}
+      <div className="mt-2 flex flex-col gap-4 px-6 pb-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-text-main dark:text-white">领养我吧 ❤️</h3>
+          <h3 className="text-xl font-bold text-[#4A3728]">领养我吧</h3>
         </div>
+
         <div className="grid grid-cols-2 gap-4">
-          <div className="group flex flex-col rounded-3xl bg-white dark:bg-card-dark p-3 shadow-soft transition-all hover:-translate-y-1 hover:shadow-lg cursor-pointer">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100">
-              <img alt="Beagle" className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcTGe7DgGuf0M-EXwYaBjE-bKuZg53PVv4k82kSVPGyDG_rLS5DNezvFh5dtKXF1CbGewdoAQyLlKrb8Pd3q1BTqNrd634I67-1krfxex1i0FYl4YROkBtbJPzAJuNi1idIBMAV00JNDczEDapYjJolWcuwXR81D662tmv3GweRkbxApazU_Gwe7nmkAdk0y2LjAkQmXwJ2y_pw2OBTarfrqhFL7QXZIr-W1yUvzYLjNU9LIC16cjt4ynY3GGzupKJtYLZ9-HThzc" />
-              <button className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/60 backdrop-blur-sm text-text-muted transition-colors hover:bg-white hover:text-red-500">
-                <span className="material-symbols-outlined filled text-[18px]">favorite</span>
+          {/* Pet Card 1 */}
+          <div className="group flex flex-col rounded-3xl bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/10 p-3 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all cursor-pointer">
+            <div className="relative aspect-square w-full overflow-hidden rounded-2xl">
+              <img
+                alt="Beagle"
+                className="h-full w-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcTGe7DgGuf0M-EXwYaBjE-bKuZg53PVv4k82kSVPGyDG_rLS5DNezvFh5dtKXF1CbGewdoAQyLlKrb8Pd3q1BTqNrd634I67-1krfxex1i0FYl4YROkBtbJPzAJuNi1idIBMAV00JNDczEDapYjJolWcuwXR81D662tmv3GweRkbxApazU_Gwe7nmkAdk0y2LjAkQmXwJ2y_pw2OBTarfrqhFL7QXZIr-W1yUvzYLjNU9LIC16cjt4ynY3GGzupKJtYLZ9-HThzc"
+              />
+              <button
+                onClick={(e) => handleToggleFavorite(e, '4')}
+                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-all shadow-sm"
+              >
+                <span className={`text-[18px] material-symbols-outlined ${isFavorited('4') ? 'text-red-500 filled' : 'text-gray-400'}`}>
+                  favorite
+                </span>
               </button>
-              <div className="absolute bottom-2 left-2 rounded-lg bg-white/80 backdrop-blur-sm px-2 py-1 text-xs font-bold text-text-main">
-                1.2 km
+              <div className="absolute bottom-2 left-2 rounded-xl bg-gradient-to-r from-[#FFB8A3]/90 to-[#FF9671]/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-white shadow-lg">
+                📍 1.2km
               </div>
             </div>
             <div className="mt-3 px-1">
               <div className="flex justify-between items-start">
-                <h4 className="text-lg font-bold text-text-main dark:text-white">麦克斯</h4>
-                <div className="flex items-center rounded-md bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5">
-                  <span className="material-symbols-outlined text-[14px] text-primary font-bold">male</span>
+                <h4 className="text-base font-bold text-[#4A3728]">麦克斯</h4>
+                <div className="flex items-center rounded-lg bg-gradient-to-br from-[#FFB8A3]/20 to-[#FF9671]/30 px-2 py-1">
+                  <span className="text-xs text-[#FF9671] font-bold">♂</span>
                 </div>
               </div>
-              <p className="text-sm font-medium text-text-muted">比格犬</p>
-              <p className="mt-1 text-xs font-semibold text-text-muted/70">3岁</p>
+              <p className="text-sm font-medium text-[#8B7355] mt-0.5">比格犬</p>
+              <p className="text-xs font-semibold text-[#A08E81] mt-1">3岁</p>
             </div>
           </div>
 
-          <div className="group flex flex-col rounded-3xl bg-white dark:bg-card-dark p-3 shadow-soft transition-all hover:-translate-y-1 hover:shadow-lg cursor-pointer">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100">
-              <img alt="Siamese cat" className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7W_vs2Xe_HI4vs0hTdtKRbEnVm0gPK2cP2sO3n8V0z17uVTpwq3LPNfUngsgKKaM33XBZOiAxC8TlIgg1VWwvtXnUGLTnj_P3jRgG1j6YXLzsNx5-0_y4Ra8GqTJrhlfFzzV5rByq31xoJ-pf27eNPLvFxE5J3xe4CYsZ0CsraJA5Q7OJFWpMIADW5dDBU7VnlAr--BAZK7C0Iy6YD6sogAk4J-Nljbiug3x4WvWROJAqowckLKUsJyMRE162ig7jEiN22GBkwA8" />
-              <button className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/60 backdrop-blur-sm text-text-muted transition-colors hover:bg-white hover:text-red-500">
-                <span className="material-symbols-outlined text-[18px]">favorite</span>
+          {/* Pet Card 2 */}
+          <div className="group flex flex-col rounded-3xl bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/10 p-3 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all cursor-pointer">
+            <div className="relative aspect-square w-full overflow-hidden rounded-2xl">
+              <img
+                alt="Siamese cat"
+                className="h-full w-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7W_vs2Xe_HI4vs0hTdtKRbEnVm0gPK2cP2sO3n8V0z17uVTpwq3LPNfUngsgKKaM33XBZOiAxC8TlIgg1VWwvtXnUGLTnj_P3jRgG1j6YXLzsNx5-0_y4Ra8GqTJrhlfFzzV5rByq31xoJ-pf27eNPLvFxE5J3xe4CYsZ0CsraJA5Q7OJFWpMIADW5dDBU7VnlAr--BAZK7C0Iy6YD6sogAk4J-Nljbiug3x4WvWROJAqowckLKUsJyMRE162ig7jEiN22GBkwA8"
+              />
+              <button
+                onClick={(e) => handleToggleFavorite(e, '5')}
+                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-all shadow-sm"
+              >
+                <span className={`text-[18px] material-symbols-outlined ${isFavorited('5') ? 'text-red-500 filled' : 'text-gray-400'}`}>
+                  favorite
+                </span>
               </button>
-              <div className="absolute bottom-2 left-2 rounded-lg bg-white/80 backdrop-blur-sm px-2 py-1 text-xs font-bold text-text-main">
-                2.5 km
+              <div className="absolute bottom-2 left-2 rounded-xl bg-gradient-to-r from-[#FFB8A3]/90 to-[#FF9671]/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-white shadow-lg">
+                📍 2.5km
               </div>
             </div>
             <div className="mt-3 px-1">
               <div className="flex justify-between items-start">
-                <h4 className="text-lg font-bold text-text-main dark:text-white">露娜</h4>
-                <div className="flex items-center rounded-md bg-pink-50 dark:bg-pink-900/30 px-1.5 py-0.5">
-                  <span className="material-symbols-outlined text-[14px] text-pink-500 font-bold">female</span>
+                <h4 className="text-base font-bold text-[#4A3728]">露娜</h4>
+                <div className="flex items-center rounded-lg bg-gradient-to-br from-pink-50 to-pink-100 px-2 py-1">
+                  <span className="text-xs text-pink-600 font-bold">♀</span>
                 </div>
               </div>
-              <p className="text-sm font-medium text-text-muted">暹罗猫</p>
-              <p className="mt-1 text-xs font-semibold text-text-muted/70">1岁</p>
+              <p className="text-sm font-medium text-[#8B7355] mt-0.5">暹罗猫</p>
+              <p className="text-xs font-semibold text-[#A08E81] mt-1">1岁</p>
             </div>
           </div>
 
-          <div className="group flex flex-col rounded-3xl bg-white dark:bg-card-dark p-3 shadow-soft transition-all hover:-translate-y-1 hover:shadow-lg cursor-pointer">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100">
-              <img alt="British Shorthair" className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXtsLTHGz1r4YKI-YqhW7a1kGhYcRn73R9GMpsAjTB1rOEGplw33ZhGsnBvu5r57Skk1sEkZu3P6pSX2dZc0lkGxBinSFHZOgBZR2gPtUBEVYrsgCdHNpeB5iCrDwgjZR6PL7GTRM-jLKKwgfXr41-E1u4G9j2d9huqf3furWM7QbXgmqk8pB369y4JbBMhdff_Eeu4GJuIauJi9Pmli5puM8zU0vNaeGqsmc7T-o9vz7aR0_6rV6luTAAh_2Ym8mRnYS1s_fxxC4" />
-              <div className="absolute bottom-2 left-2 rounded-lg bg-white/80 backdrop-blur-sm px-2 py-1 text-xs font-bold text-text-main">
-                0.8 km
-              </div>
-            </div>
-            <div className="mt-3 px-1">
-              <div className="flex justify-between items-start">
-                <h4 className="text-lg font-bold text-text-main dark:text-white">贝拉</h4>
-                <div className="flex items-center rounded-md bg-pink-50 dark:bg-pink-900/30 px-1.5 py-0.5">
-                  <span className="material-symbols-outlined text-[14px] text-pink-500 font-bold">female</span>
-                </div>
-              </div>
-              <p className="text-sm font-medium text-text-muted">英国短毛猫</p>
-              <p className="mt-1 text-xs font-semibold text-text-muted/70">6个月</p>
-            </div>
-          </div>
-
-          <div className="group flex flex-col rounded-3xl bg-white dark:bg-card-dark p-3 shadow-soft transition-all hover:-translate-y-1 hover:shadow-lg cursor-pointer">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100">
-              <img alt="French Bulldog" className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl3toi0-lNTgAwXFR93fb-CIjYhxhMeJJ2TgAwZ1K5jnZ4adCOQULcLV19rrojSU_EaKkjB73RhDVqIDzKV53Y0pSWgg20lNQz17-6Ci5Hl-USeIBr2Ma7pxMDG9qjZNCK_qw1YyBHxbQwfv2L870WDGBIyzW5U1IEvqNZcTkotjHlKYGV7SJzXy9ppNAc1QgK4zpV0A-1AWncAEZEHvhxP2wo1p-GhDsNbYwTTKfJmBYvYsycYu8HaJ53U5_0k8k8nlYbpU753DI" />
-              <div className="absolute bottom-2 left-2 rounded-lg bg-white/80 backdrop-blur-sm px-2 py-1 text-xs font-bold text-text-main">
-                4.2 km
-              </div>
-            </div>
-            <div className="mt-3 px-1">
-              <div className="flex justify-between items-start">
-                <h4 className="text-lg font-bold text-text-main dark:text-white">洛基</h4>
-                <div className="flex items-center rounded-md bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5">
-                  <span className="material-symbols-outlined text-[14px] text-primary font-bold">male</span>
-                </div>
-              </div>
-              <p className="text-sm font-medium text-text-muted">斗牛犬</p>
-              <p className="mt-1 text-xs font-semibold text-text-muted/70">2岁</p>
-            </div>
-          </div>
+          {/* More cards can be added similarly */}
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

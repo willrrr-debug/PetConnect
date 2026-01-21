@@ -1,8 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context';
 
 const ProfileScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { profile, favorites } = useApp();
 
   return (
     <div className="bg-background-light dark:bg-background-dark font-sans text-text-main dark:text-white transition-colors duration-200 min-h-screen pb-20">
@@ -23,18 +25,22 @@ const ProfileScreen: React.FC = () => {
             className="relative mb-4 group cursor-pointer"
           >
             <div
-              className="bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 shadow-lg ring-4 ring-white dark:ring-surface-dark transition-transform group-hover:scale-105 duration-300"
-              style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5vLJ1OukI1OOSo8_LttlcZX5TjojtbZORPDBx6pG4xwoDQd3RbyxS972wzKw8epwV5tpPst1PmTkAwpSkx_C3FhzDMYecJ67W_MCs9krFjOkrfJHvfsh0OqmyhY-_gMB2F0Z73z2uihz0dJhwXYDJcHdxqxdYR-S2vuvtAGVBpK3GJlgXM90WI3G-Gc1lugWPwh8IRYrW1lVyoIkffQFUICC-gw_Jj9BfUpurP9aSKNmKmtYoCazxup-k2kgrzSyIeG4mV6Dnbf0')" }}
+              className="bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 shadow-lg ring-4 ring-white dark:ring-surface-dark transition-transform group-hover:scale-105 duration-300 bg-gray-100"
+              style={{ backgroundImage: `url('${profile?.avatarUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuB5vLJ1OukI1OOSo8_LttlcZX5TjojtbZORPDBx6pG4xwoDQd3RbyxS972wzKw8epwV5tpPst1PmTkAwpSkx_C3FhzDMYecJ67W_MCs9krFjOkrfJHvfsh0OqmyhY-_gMB2F0Z73z2uihz0dJhwXYDJcHdxqxdYR-S2vuvtAGVBpK3GJlgXM90WI3G-Gc1lugWPwh8IRYrW1lVyoIkffQFUICC-gw_Jj9BfUpurP9aSKNmKmtYoCazxup-k2kgrzSyIeG4mV6Dnbf0'}')` }}
             >
             </div>
             <div className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-md flex items-center justify-center border-2 border-white dark:border-surface-dark">
               <span className="material-symbols-outlined text-sm">edit</span>
             </div>
           </div>
-          <h1 className="text-text-main dark:text-white text-2xl font-bold leading-tight tracking-tight text-center mb-1">Sarah Jenkins</h1>
+          <h1 className="text-text-main dark:text-white text-2xl font-bold leading-tight tracking-tight text-center mb-1">
+            {profile?.name || 'Sarah Jenkins'}
+          </h1>
           <div className="flex items-center gap-1.5 bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-full mt-1">
             <span className="material-symbols-outlined text-primary text-lg filled">verified</span>
-            <p className="text-primary text-sm font-semibold leading-normal">已认证领养人</p>
+            <p className="text-primary text-sm font-semibold leading-normal">
+              {profile?.verified ? '已认证领养人' : '普通用户'}
+            </p>
           </div>
         </div>
 
@@ -48,11 +54,11 @@ const ProfileScreen: React.FC = () => {
               onClick={() => navigate('/favorites')}
               className="flex-1 flex flex-col gap-1 items-center justify-center rounded-2xl p-4 bg-surface-light dark:bg-surface-dark shadow-sm border border-transparent dark:border-white/5 transition-all hover:shadow-md cursor-pointer"
             >
-              <p className="text-primary text-3xl font-bold leading-tight">14</p>
+              <p className="text-primary text-3xl font-bold leading-tight">{favorites.length}</p>
               <p className="text-text-secondary dark:text-gray-400 text-xs font-medium uppercase tracking-wider">收藏</p>
             </div>
             <div className="flex-1 flex flex-col gap-1 items-center justify-center rounded-2xl p-4 bg-surface-light dark:bg-surface-dark shadow-sm border border-transparent dark:border-white/5 transition-all hover:shadow-md">
-              <p className="text-primary text-3xl font-bold leading-tight">5</p>
+              <p className="text-primary text-3xl font-bold leading-tight">0</p>
               <p className="text-text-secondary dark:text-gray-400 text-xs font-medium uppercase tracking-wider">关注</p>
             </div>
           </div>
@@ -63,10 +69,10 @@ const ProfileScreen: React.FC = () => {
             onClick={() => navigate('/messages')}
             className="flex items-center gap-4 p-4 rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-none border border-transparent dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition-all group relative overflow-hidden cursor-pointer"
           >
-            <div className="absolute left-0 top-4 bottom-4 w-1 bg-indigo-500 rounded-r-full"></div>
-            <div className="flex items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 shrink-0 size-12 group-hover:scale-110 transition-transform relative">
+            <div className="absolute left-0 top-4 bottom-4 w-1 bg-primary rounded-r-full"></div>
+            <div className="flex items-center justify-center rounded-xl bg-[#FFB8A3]/20 dark:bg-[#FFB8A3]/10 text-primary shrink-0 size-12 group-hover:scale-110 transition-transform relative">
               <span className="material-symbols-outlined">chat</span>
-              <span className="absolute top-2.5 right-2.5 size-2.5 bg-red-500 border-2 border-indigo-50 dark:border-indigo-900 rounded-full"></span>
+              <span className="absolute top-2.5 right-2.5 size-2.5 bg-red-500 border-2 border-[#FFB8A3]/20 dark:border-[#FFB8A3]/10 rounded-full"></span>
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
@@ -88,7 +94,7 @@ const ProfileScreen: React.FC = () => {
               onClick={() => navigate('/my-applications')}
               className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group cursor-pointer"
             >
-              <div className="flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/30 text-primary shrink-0 size-10 group-hover:scale-110 transition-transform">
+              <div className="flex items-center justify-center rounded-xl bg-[#FFB8A3]/20 dark:bg-[#FFB8A3]/10 text-primary shrink-0 size-10 group-hover:scale-110 transition-transform">
                 <span className="material-symbols-outlined">description</span>
               </div>
               <div className="flex-1">

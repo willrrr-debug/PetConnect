@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Noto Sans SC", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  background-color: #f5f7f8;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+@layer components {
+  .btn-primary {
+    @apply flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 font-bold text-white shadow-md shadow-primary/20 transition-transform active:scale-95 hover:bg-primary/90;
+  }
+
+  .btn-secondary {
+    @apply flex items-center justify-center gap-2 rounded-xl bg-white dark:bg-card-dark px-4 py-2 font-bold text-text-main dark:text-white shadow-soft transition-transform active:scale-95 border border-transparent hover:border-primary/20;
+  }
+
+  .card {
+    @apply rounded-[2rem] bg-white dark:bg-card-dark p-6 shadow-soft border border-transparent transition-all;
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border-none bg-background-light dark:bg-background-dark px-4 py-3 text-base font-medium focus:ring-2 focus:ring-primary/50 outline-none transition-all;
+  }
+}

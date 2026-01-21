@@ -26,7 +26,7 @@ export const mockPets: Pet[] = [
         healthTags: [
             { id: '1', label: '已接种疫苗', icon: 'vaccines', color: 'green' },
             { id: '2', label: '已绝育', icon: 'medical_services', color: 'purple' },
-            { id: '3', label: '性格友好', icon: 'pets', color: 'blue' },
+            { id: '3', label: '性格友好', icon: 'pets', color: 'orange' },
             { id: '4', label: '已训练', icon: 'home', color: 'yellow' },
         ],
         requirements: ['需要积极的生活方式（每日跑步）', '与其他狗狗相处融洽'],

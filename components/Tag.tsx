@@ -6,7 +6,7 @@ export interface TagProps {
     /** 图标 */
     icon?: string;
     /** 颜色主题 */
-    color?: 'green' | 'purple' | 'blue' | 'yellow' | 'red' | 'gray';
+    color?: 'green' | 'purple' | 'blue' | 'yellow' | 'red' | 'gray' | 'orange';
     /** 尺寸 */
     size?: 'sm' | 'md';
 }
@@ -25,7 +25,8 @@ const Tag: React.FC<TagProps> = ({
     const colorStyles = {
         green: 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-900/30 text-green-700 dark:text-green-400',
         purple: 'bg-purple-50 dark:bg-purple-900/20 border-purple-100 dark:border-purple-900/30 text-purple-700 dark:text-purple-400',
-        blue: 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-400',
+        blue: 'bg-orange-50 dark:bg-orange-900/20 border-orange-100 dark:border-orange-900/30 text-orange-700 dark:text-orange-400',
+        orange: 'bg-orange-50 dark:bg-orange-900/20 border-orange-100 dark:border-orange-900/30 text-orange-700 dark:text-orange-400',
         yellow: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-100 dark:border-yellow-900/30 text-yellow-700 dark:text-yellow-400',
         red: 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30 text-red-700 dark:text-red-400',
         gray: 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400',

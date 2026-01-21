@@ -34,57 +34,75 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-background-dark font-sans text-[#111618] dark:text-white antialiased min-h-screen flex flex-col">
-      <div className="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#eef7ff] to-white dark:from-[#15202b] dark:to-background-dark">
-        <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full bg-primary/5 blur-3xl"></div>
-        <div className="absolute bottom-10 right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/5 blur-3xl"></div>
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="size-48 rounded-full bg-white p-2 shadow-xl shadow-blue-900/5 dark:bg-surface-dark dark:shadow-none animate-float">
+    <div className="relative min-h-screen overflow-hidden bg-[#FFF9F5] font-sans">
+      {/* 背景装饰 */}
+      <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-[#FFB8A3]/20 to-transparent blur-3xl"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tl from-[#FF9671]/15 to-transparent blur-3xl"></div>
+
+      {/* 头像区域 */}
+      <div className="relative pt-16 pb-6 flex flex-col items-center z-10">
+        {/* 玻璃态头像容器 */}
+        <div className="relative">
+          <div className="w-36 h-36 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl shadow-[#FFB8A3]/20 p-1.5 animate-float">
             <div
-              aria-label="Happy pet illustration"
-              className="w-full h-full rounded-full bg-cover bg-center overflow-hidden border-4 border-white dark:border-gray-700"
-              role="img"
-              style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDDNgVh4DJGy5DBClF4Ko4pufTG4XNUn05LjLauMrm98gcAJmjpGVMXR9msmyEG0TICn_4U7Gy-j_Jal0wNDgH-QYkICKC7N57GlcC1h4eU7yB_7F38RQPAGmW5E3LD7deIBIhZI53RY9e8RwJgQwtedtbuyEe3iGu0VwSEYSsUsZqkFwHCAHLmcUFsIaBiPcgFwHT8vFg1B9qi03G0KfJBzgoSwunMUIrz-WTUHyK-bRx9RBiNOAxSjPZHGeg1v7NboIMVJ4Zia_s')" }}
-            >
-            </div>
+              className="w-full h-full rounded-full bg-cover bg-center"
+              style={{ backgroundImage: "url('/images/cat-background.png')" }}
+            />
           </div>
-          <div className="mt-6 text-center px-6">
-            <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">寻找您的完美伙伴</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium tracking-wide">温暖每一个流浪的心灵</p>
-          </div>
+          {/* 装饰光环 */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FFB8A3]/30 to-[#FF9671]/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity"></div>
+        </div>
+
+        {/* 标题 */}
+        <div className="mt-8 text-center px-6">
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#4A3728]">
+            寻找您的完美伙伴
+          </h1>
+          <p className="text-base text-[#8B7355] mt-2 font-medium">
+            连接每一次美丽的心动
+          </p>
         </div>
       </div>
 
-      <div className="flex-1 bg-white dark:bg-background-dark px-8 relative z-20 pb-8">
-        <div className="flex items-end gap-7 mb-8">
-          <button className="text-[28px] font-black text-[#111618] dark:text-white relative pb-2 leading-none transition-opacity">
+      {/* 表单区域 */}
+      <div className="relative z-20 px-8 pb-8">
+        {/* 登录/注册切换 */}
+        <div className="flex items-end gap-6 mb-8">
+          <button className="text-3xl font-black text-[#4A3728] relative pb-2">
             登录
-            <span className="absolute bottom-0 left-0 w-8 h-1.5 bg-primary rounded-full"></span>
+            <span className="absolute bottom-0 left-0 w-10 h-1.5 bg-gradient-to-r from-[#FFB8A3] to-[#FF9671] rounded-full"></span>
           </button>
           <button
             onClick={() => navigate('/register')}
-            className="text-xl font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors pb-2.5 leading-none"
+            className="text-xl font-bold text-[#A08E81] hover:text-[#8B7355] transition-colors pb-2.5"
           >
             注册
           </button>
         </div>
 
+        {/* 错误提示 */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
-            <span className="material-symbols-outlined text-[18px]">error</span>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm font-medium flex items-center gap-3 animate-shake">
+            <span className="text-lg">⚠️</span>
             {error}
           </div>
         )}
 
+        {/* 表单 */}
         <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* 邮箱输入 */}
           <div className="group">
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">邮箱</label>
-            <div className="relative transition-all">
+            <label className="block text-xs font-bold text-[#8B7355] uppercase tracking-wider mb-2 pl-1">
+              邮箱
+            </label>
+            <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors text-[22px]">mail</span>
+                <span className="text-[#A08E81] group-focus-within:text-[#FFB8A3] transition-colors text-xl">
+                  ✉️
+                </span>
               </div>
               <input
-                className="block w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-[#1c2e36] border-none rounded-2xl text-[#111618] dark:text-white font-bold placeholder-gray-400 focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-[#1c2e36] transition-all shadow-sm"
+                className="block w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/20 rounded-xl text-[#4A3728] font-semibold placeholder-[#C4B5A0] focus:ring-2 focus:ring-[#FFB8A3]/50 focus:border-[#FFB8A3] focus:bg-white transition-all shadow-sm hover:shadow-md"
                 placeholder="请输入邮箱"
                 type="email"
                 value={email}
@@ -93,78 +111,120 @@ const LoginScreen: React.FC = () => {
             </div>
           </div>
 
+          {/* 密码输入 */}
           <div className="group">
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">密码</label>
-            <div className="relative transition-all">
+            <label className="block text-xs font-bold text-[#8B7355] uppercase tracking-wider mb-2 pl-1">
+              密码
+            </label>
+            <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors text-[22px]">lock</span>
+                <span className="text-[#A08E81] group-focus-within:text-[#FFB8A3] transition-colors text-xl">
+                  🔒
+                </span>
               </div>
               <input
-                className="block w-full pl-12 pr-12 py-4 bg-gray-50 dark:bg-[#1c2e36] border-none rounded-2xl text-[#111618] dark:text-white font-bold placeholder-gray-400 focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-[#1c2e36] transition-all shadow-sm"
+                className="block w-full pl-12 pr-12 py-4 bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/20 rounded-xl text-[#4A3728] font-semibold placeholder-[#C4B5A0] focus:ring-2 focus:ring-[#FFB8A3]/50 focus:border-[#FFB8A3] focus:bg-white transition-all shadow-sm hover:shadow-md"
                 placeholder="请输入密码"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#A08E81] hover:text-[#8B7355] transition-colors"
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                <span className="material-symbols-outlined text-[20px]">
-                  {showPassword ? 'visibility' : 'visibility_off'}
+                <span className="text-lg">
+                  {showPassword ? '👁️' : '🙈'}
                 </span>
               </button>
             </div>
           </div>
 
+          {/* 忘记密码 */}
           <div className="flex justify-end pt-1">
-            <a className="text-sm font-bold text-gray-400 hover:text-primary transition-colors" href="#">忘记密码?</a>
+            <a className="text-sm font-bold text-[#A08E81] hover:text-[#FFB8A3] transition-colors" href="#">
+              忘记密码?
+            </a>
           </div>
 
+          {/* 登录按钮 */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-[#2b8fd9] disabled:opacity-50 text-white font-bold text-lg py-4 rounded-2xl shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all mt-4 flex items-center justify-center gap-2"
+            className="group relative w-full bg-gradient-to-r from-[#FFB8A3] to-[#FF9671] hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-lg py-4 rounded-2xl shadow-xl shadow-[#FFB8A3]/40 active:scale-[0.98] transition-all mt-6 flex items-center justify-center gap-2 overflow-hidden"
           >
-            {loading ? (
-              <>
-                <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>
-                登录中...
-              </>
-            ) : (
-              <>
-                登录
-                <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-              </>
-            )}
+            {/* 按钮光效 */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+
+            <span className="relative z-10 flex items-center gap-2">
+              {loading ? (
+                <>
+                  <span className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  登录中...
+                </>
+              ) : (
+                <>
+                  登录
+                  <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+                </>
+              )}
+            </span>
           </button>
         </form>
 
+        {/* 社交登录 */}
         <div className="mt-10 mb-4">
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-gray-100 dark:border-gray-800"></div>
-            <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold">社交账号登录</span>
-            <div className="flex-grow border-t border-gray-100 dark:border-gray-800"></div>
+          <div className="relative flex py-3 items-center">
+            <div className="flex-grow border-t border-[#E8DED0]"></div>
+            <span className="flex-shrink-0 mx-4 text-[#A08E81] text-xs font-bold tracking-wide">
+              社交媒体登录
+            </span>
+            <div className="flex-grow border-t border-[#E8DED0]"></div>
           </div>
 
-          <div className="flex justify-center gap-6 mt-6">
+          <div className="flex justify-center gap-4 mt-6">
             <button
               type="button"
               onClick={() => alert('开发配置中，敬请期待')}
-              className="size-12 rounded-full bg-[#f2fcf6] hover:bg-[#e0f7ea] border border-[#d6f2e0] flex items-center justify-center transition-colors group"
+              className="group w-14 h-14 rounded-2xl bg-gradient-to-br from-[#07C160]/10 to-[#07C160]/5 hover:from-[#07C160]/20 hover:to-[#07C160]/10 border border-[#07C160]/20 flex items-center justify-center transition-all hover:scale-105 hover:shadow-lg shadow-[#07C160]/20"
             >
-              <svg className="w-6 h-6 text-[#07C160]" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-7 h-7 text-[#07C160]" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8.5 4C4.358 4 1 7.134 1 11c0 2.126.98 4.024 2.503 5.342l-.568 2.083 2.518-1.32c.944.305 1.956.471 3.012.471.503 0 .99-.038 1.459-.11-.274-.634-.423-1.332-.423-2.067 0-3.13 2.91-5.666 6.5-5.666.541 0 1.066.059 1.564.172C16.666 6.273 13.06 4 8.5 4zm10 5.4c-3.038 0-5.5 2.239-5.5 5 0 2.761 2.462 5 5.5 5 .765 0 1.49-.14 2.146-.395l1.638.918-.466-1.603C22.618 17.387 24 16.035 24 14.4c0-2.761-1.962-5.4-5.5-5z" />
               </svg>
             </button>
           </div>
 
-          <p className="text-center text-[10px] text-gray-300 mt-8">
-            登录即代表您同意 <span className="text-gray-400 underline">隐私政策</span>
+          <p className="text-center text-[10px] text-[#C4B5A0] mt-8">
+            登录即代表您同意{' '}
+            <span className="text-[#A08E81] underline cursor-pointer hover:text-[#8B7355] transition-colors">
+              隐私政策
+            </span>
           </p>
         </div>
       </div>
+
+      {/* 动画样式 */}
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+          20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
+        }
+        
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 };

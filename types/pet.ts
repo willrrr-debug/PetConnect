@@ -13,7 +13,7 @@ export interface HealthTag {
   id: string;
   label: string;
   icon: string;
-  color: 'green' | 'purple' | 'blue' | 'yellow' | 'red';
+  color: 'green' | 'purple' | 'blue' | 'yellow' | 'red' | 'orange';
 }
 
 /** 宠物基础信息 */

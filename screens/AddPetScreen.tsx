@@ -176,7 +176,7 @@ const AddPetScreen: React.FC = () => {
                 <div className="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-soft divide-y divide-gray-50 dark:divide-gray-800">
                     <div className="flex items-center justify-between p-4">
                         <div className="flex items-center gap-3.5 shrink-0">
-                            <div className="size-9 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary">
+                            <div className="size-9 rounded-full bg-[#FFB8A3]/20 dark:bg-[#FFB8A3]/10 flex items-center justify-center text-primary">
                                 <span className="material-symbols-outlined text-[20px] filled">location_on</span>
                             </div>
                             <span className="font-bold text-sm text-gray-900 dark:text-white">所在位置</span>

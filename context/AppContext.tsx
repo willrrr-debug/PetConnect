@@ -81,13 +81,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             .eq('id', userId)
             .single();
 
-        if (data) {
+        const profileData = data as any;
+
+        if (profileData) {
             return {
-                id: data.id,
-                name: data.name,
-                avatarUrl: data.avatar_url,
-                phone: data.phone,
-                verified: data.verified,
+                id: profileData.id,
+                name: profileData.name,
+                avatarUrl: profileData.avatar_url,
+                phone: profileData.phone,
+                verified: profileData.verified,
             };
         }
         return null;
@@ -133,16 +135,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
             // Supabase 模式
             const { data: { session } } = await supabase.auth.getSession();
+            const savedFavorites = localStorage.getItem('petconnect_favorites');
+            const localFavorites = savedFavorites ? JSON.parse(savedFavorites) : [];
 
             if (session?.user) {
                 const profile = await fetchProfile(session.user.id);
-                const favorites = await fetchFavorites(session.user.id);
+                const supabaseFavorites = await fetchFavorites(session.user.id);
+                // 合并本地（Mock）和云端收藏
+                const mergedFavorites = Array.from(new Set([...supabaseFavorites, ...localFavorites]));
 
                 setState({
                     user: session.user,
                     profile,
                     isAuthenticated: true,
-                    favorites,
+                    favorites: mergedFavorites,
                     loading: false,
                     initialized: true,
                     isMockMode: false,
@@ -150,6 +156,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             } else {
                 setState((prev) => ({
                     ...prev,
+                    favorites: localFavorites,
                     loading: false,
                     initialized: true,
                     isMockMode: false,
@@ -192,12 +199,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         }
     }, [fetchProfile, fetchFavorites]);
 
-    // 同步收藏到 localStorage（Mock 模式）
+    // 同步收藏到 localStorage (即使是 Supabase 模式，也同步 mock ID 的收藏)
     useEffect(() => {
-        if (state.isMockMode && state.initialized) {
+        if (state.initialized) {
             localStorage.setItem('petconnect_favorites', JSON.stringify(state.favorites));
         }
-    }, [state.favorites, state.isMockMode, state.initialized]);
+    }, [state.favorites, state.initialized]);
 
     // 登录
     const login = useCallback(async (email: string, password: string) => {
@@ -297,13 +304,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         // 乐观更新
         setState((prev) => ({
             ...prev,
-            favorites: [...prev.favorites, petId],
+            favorites: Array.from(new Set([...prev.favorites, petId])),
         }));
 
-        if (!state.isMockMode && state.user) {
+        // 如果是系统预设的 Mock ID (通常不是 UUID)，不尝试同步到 Supabase 
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(petId);
+
+        if (!state.isMockMode && state.user && isUUID) {
             const { success } = await favoritesService.addFavorite(state.user.id, petId);
             if (!success) {
-                // 回滚
+                // 仅在真实数据同步失败时回滚
                 setState((prev) => ({
                     ...prev,
                     favorites: prev.favorites.filter((id) => id !== petId),
@@ -320,7 +330,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             favorites: prev.favorites.filter((id) => id !== petId),
         }));
 
-        if (!state.isMockMode && state.user) {
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(petId);
+
+        if (!state.isMockMode && state.user && isUUID) {
             const { success } = await favoritesService.removeFavorite(state.user.id, petId);
             if (!success) {
                 // 回滚

@@ -10,6 +10,7 @@ import HomeScreen from './screens/HomeScreen';
 import ForumScreen from './screens/ForumScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import PetDetailScreen from './screens/PetDetailScreen';
+import PostDetailScreen from './screens/PostDetailScreen';
 import ApplicationScreen from './screens/ApplicationScreen';
 import MessageCenterScreen from './screens/MessageCenterScreen';
 import ChatScreen from './screens/ChatScreen';
@@ -45,9 +46,10 @@ const AppContent: React.FC = () => {
 
   // Also hide for dynamic routes
   const isPetDetail = location.pathname.startsWith('/pet/');
+  const isPostDetail = location.pathname.startsWith('/post/');
   const isChat = location.pathname.startsWith('/chat/');
 
-  const shouldShowBottomNav = !hideBottomNavPaths.includes(location.pathname) && !isPetDetail && !isChat;
+  const shouldShowBottomNav = !hideBottomNavPaths.includes(location.pathname) && !isPetDetail && !isPostDetail && !isChat;
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark">
@@ -59,6 +61,7 @@ const AppContent: React.FC = () => {
         <Route path="/forum" element={<ForumScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/pet/:id" element={<PetDetailScreen />} />
+        <Route path="/post/:id" element={<PostDetailScreen />} />
         <Route path="/applications" element={<ApplicationScreen />} />
         <Route path="/messages" element={<MessageCenterScreen />} />
         <Route path="/chat/:id" element={<ChatScreen />} />
