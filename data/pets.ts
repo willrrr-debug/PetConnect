@@ -5,6 +5,21 @@
 
 import type { Pet, Shelter } from '../types';
 
+// 预加载图片资源，确保会被 Vite 打包和哈希
+import pet1Main from '../assets/images/pets/1-main.jpg';
+import pet1G1 from '../assets/images/pets/1-gallery-1.jpg';
+import pet1G2 from '../assets/images/pets/1-gallery-2.jpg';
+import pet1G3 from '../assets/images/pets/1-gallery-3.jpg';
+import pet2Main from '../assets/images/pets/2-main.jpg';
+import pet3Main from '../assets/images/pets/3-main.jpg';
+import pet4Main from '../assets/images/pets/4-main.jpg';
+import pet5Main from '../assets/images/pets/5-main.jpg';
+import pet6Main from '../assets/images/pets/6-main.jpg';
+import pet7Main from '../assets/images/pets/7-main.jpg';
+
+import shelter1Img from '../assets/images/shelters/shelter-1.jpg';
+import shelter2Img from '../assets/images/shelters/shelter-2.jpg';
+
 /** 宠物列表数据 */
 export const mockPets: Pet[] = [
     {
@@ -15,11 +30,11 @@ export const mockPets: Pet[] = [
         age: '2岁',
         gender: 'male',
         weight: '65磅',
-        imageUrl: '/images/pets/1-main.jpg',
+        imageUrl: pet1Main,
         images: [
-            '/images/pets/1-gallery-1.jpg',
-            '/images/pets/1-gallery-2.jpg',
-            '/images/pets/1-gallery-3.jpg',
+            pet1G1,
+            pet1G2,
+            pet1G3,
         ],
         distance: '2英里',
         description: '巴弟是个快乐的小家伙，喜欢长距离散步和肚皮按摩。他被发现流浪，但在我们的寄养团队中适应得很好。他已经学会了"坐下"，而且非常讨人喜欢！他有一颗金子般的心，正在寻找一个能让他成为焦点的永远的家。',
@@ -40,7 +55,7 @@ export const mockPets: Pet[] = [
         breed: '虎斑',
         age: '8月',
         gender: 'female',
-        imageUrl: '/images/pets/2-main.jpg',
+        imageUrl: pet2Main,
     },
     {
         id: '3',
@@ -49,7 +64,7 @@ export const mockPets: Pet[] = [
         breed: '寻回犬',
         age: '4月',
         gender: 'female',
-        imageUrl: '/images/pets/3-main.jpg',
+        imageUrl: pet3Main,
     },
     {
         id: '4',
@@ -59,7 +74,7 @@ export const mockPets: Pet[] = [
         age: '3岁',
         gender: 'male',
         distance: '1.2 km',
-        imageUrl: '/images/pets/4-main.jpg',
+        imageUrl: pet4Main,
     },
     {
         id: '5',
@@ -69,7 +84,7 @@ export const mockPets: Pet[] = [
         age: '1岁',
         gender: 'female',
         distance: '2.5 km',
-        imageUrl: '/images/pets/5-main.jpg',
+        imageUrl: pet5Main,
     },
     {
         id: '6',
@@ -79,7 +94,7 @@ export const mockPets: Pet[] = [
         age: '6个月',
         gender: 'female',
         distance: '0.8 km',
-        imageUrl: '/images/pets/6-main.jpg',
+        imageUrl: pet6Main,
     },
     {
         id: '7',
@@ -89,7 +104,7 @@ export const mockPets: Pet[] = [
         age: '2岁',
         gender: 'male',
         distance: '4.2 km',
-        imageUrl: '/images/pets/7-main.jpg',
+        imageUrl: pet7Main,
     },
 ];
 
@@ -98,14 +113,14 @@ export const mockShelters: Shelter[] = [
     {
         id: 'shelter-1',
         name: '爪友救助站',
-        avatar: '/images/shelters/shelter-1.jpg',
+        avatar: shelter1Img,
         verified: true,
         location: '上海市',
     },
     {
         id: 'shelter-2',
         name: '快乐爪爪救助站',
-        avatar: '/images/shelters/shelter-2.jpg',
+        avatar: shelter2Img,
         verified: true,
         location: '上海市',
     },
