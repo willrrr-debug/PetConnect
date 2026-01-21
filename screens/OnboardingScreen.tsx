@@ -42,7 +42,7 @@ const OnboardingScreen: React.FC = () => {
             <div className="relative space-y-6">
               {/* 标题区域 */}
               <div className="space-y-4 relative text-center">
-                <h1 className="text-5xl font-extrabold leading-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
+                <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
                   每一个毛孩子<br />
                   都在等待
                   <span className="relative inline-block ml-2">
