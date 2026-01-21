@@ -42,8 +42,8 @@ export async function signUp(
         if (data.user) {
             await supabase.from('profiles').insert({
                 id: data.user.id,
-                name,
-            });
+                name: name,
+            } as any);
         }
 
         return { user: data.user, error: null };
@@ -126,5 +126,19 @@ export async function resetPassword(email: string): Promise<{ error: AuthError |
         return { error: null };
     } catch (err) {
         return { error: { message: '发送重置邮件失败' } };
+    }
+}
+/**
+ * 更新用户密码（用于重置流程）
+ */
+export async function updatePassword(newPassword: string): Promise<{ error: AuthError | null }> {
+    try {
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        if (error) {
+            return { error: { message: error.message } };
+        }
+        return { error: null };
+    } catch (err) {
+        return { error: { message: '更新密码失败' } };
     }
 }

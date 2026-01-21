@@ -4,12 +4,28 @@ import { useApp } from '../context';
 
 const LoginScreen: React.FC = () => {
   const navigate = useNavigate();
-  const { login, loading } = useApp();
+  const { login, loading, sendPasswordResetEmail } = useApp();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [resetSent, setResetSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      setError('请先在上方输入您的邮箱地址，然后再点击忘记密码');
+      return;
+    }
+    setError('');
+    const result = await sendPasswordResetEmail(email);
+    if (result.success) {
+      setResetSent(true);
+      setTimeout(() => setResetSent(false), 5000);
+    } else {
+      setError(result.error || '发送重置邮件失败');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +96,14 @@ const LoginScreen: React.FC = () => {
           </button>
         </div>
 
+        {/* 成功提示 */}
+        {resetSent && (
+          <div className="mb-6 p-4 bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-2xl text-green-700 text-sm font-bold flex items-center gap-3 animate-fadeIn">
+            <span className="text-lg">📧</span>
+            重置邮件已发送！请检查您的收件箱。
+          </div>
+        )}
+
         {/* 错误提示 */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm font-medium flex items-center gap-3 animate-shake">
@@ -143,9 +167,13 @@ const LoginScreen: React.FC = () => {
 
           {/* 忘记密码 */}
           <div className="flex justify-end pt-1">
-            <a className="text-sm font-bold text-[#A08E81] hover:text-[#FFB8A3] transition-colors" href="#">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-sm font-bold text-[#A08E81] hover:text-[#FFB8A3] transition-colors"
+            >
               忘记密码?
-            </a>
+            </button>
           </div>
 
           {/* 登录按钮 */}

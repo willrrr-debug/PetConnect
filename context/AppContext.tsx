@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured, onAuthStateChange, signIn, signUp, signOut as authSignOut } from '../services';
+import { supabase, isSupabaseConfigured, onAuthStateChange, signIn, signUp, signOut as authSignOut, resetPassword as authResetPassword } from '../services';
 import * as favoritesService from '../services/favorites';
 import { mockCurrentUser } from '../data';
 
@@ -36,8 +36,10 @@ interface AppContextType extends AppState {
     login: (email: string, password: string) => Promise<{ success: boolean; error: string | null }>;
     /** 注册 */
     register: (email: string, password: string, name: string) => Promise<{ success: boolean; error: string | null }>;
-    /** 登出 */
+    /** 重置密码 */
     logout: () => Promise<void>;
+    /** 发送重置密码邮件 */
+    sendPasswordResetEmail: (email: string) => Promise<{ success: boolean; error: string | null }>;
     /** 添加收藏 */
     addFavorite: (petId: string) => Promise<void>;
     /** 移除收藏 */
@@ -291,6 +293,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         }));
     }, [state.isMockMode]);
 
+    // 发送重置密码邮件
+    const sendPasswordResetEmail = useCallback(async (email: string) => {
+        if (!isSupabaseConfigured) {
+            await new Promise(resolve => setTimeout(resolve, 800));
+            return { success: true, error: null };
+        }
+
+        const { error } = await authResetPassword(email);
+        return { success: !error, error: error?.message || null };
+    }, []);
+
     // 刷新收藏列表
     const refreshFavorites = useCallback(async () => {
         if (state.user || state.isMockMode) {
@@ -363,6 +376,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         login,
         register,
         logout,
+        sendPasswordResetEmail,
         addFavorite,
         removeFavorite,
         toggleFavorite,

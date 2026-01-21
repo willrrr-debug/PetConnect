@@ -24,9 +24,31 @@ import SettingsScreen from './screens/SettingsScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
 import ShelterVisitScreen from './screens/ShelterVisitScreen';
 import HelpCenterScreen from './screens/HelpCenterScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
+
+import { useApp } from './context/AppContext';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
+  const { isAuthenticated, initialized } = useApp();
+
+  const publicPaths = ['/', '/login', '/register', '/reset-password'];
+  const isPublicPath = publicPaths.includes(location.pathname);
+
+  // 如果未初始化，显示加载占位（可选）
+  if (!initialized) {
+    return (
+      <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // 路由守卫：未登录且访问非公开页面 -> 跳转登录
+  if (!isAuthenticated && !isPublicPath) {
+    return <Navigate to="/login" replace />;
+  }
+
   const hideBottomNavPaths = [
     '/',
     '/login',
@@ -57,6 +79,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<OnboardingScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/register" element={<RegisterScreen />} />
+        <Route path="/reset-password" element={<ResetPasswordScreen />} />
         <Route path="/home" element={<HomeScreen />} />
         <Route path="/forum" element={<ForumScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />

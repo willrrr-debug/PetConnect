@@ -4,7 +4,12 @@ import { getAvatarUrl } from '../utils/avatar';
 
 const ProfileScreen: React.FC = () => {
   const navigate = useNavigate();
-  const { profile, favorites, user } = useApp();
+  const { profile, favorites, user, logout } = useApp();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   return (
     <div className="flex-1 h-full overflow-y-auto no-scrollbar bg-background-light dark:bg-background-dark font-sans text-text-main dark:text-white pb-32">
@@ -161,7 +166,7 @@ const ProfileScreen: React.FC = () => {
 
       <div className="px-4 mt-8 mb-6">
         <button
-          onClick={() => navigate('/login')}
+          onClick={handleLogout}
           className="w-full py-3.5 rounded-xl border border-red-100 dark:border-red-900/30 bg-surface-light dark:bg-surface-dark text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 active:scale-[0.98] transition-all font-semibold text-base flex items-center justify-center gap-2 shadow-sm"
         >
           <span className="material-symbols-outlined">logout</span>
