@@ -6,6 +6,8 @@
 import type { Pet, Shelter } from '../types';
 
 // 预加载图片资源，确保会被 Vite 打包和哈希
+// 预加载图片资源 (已注释，因本地文件缺失，改用占位图)
+/*
 import pet1Main from '../assets/images/pets/1-main.jpg';
 import pet1G1 from '../assets/images/pets/1-gallery-1.jpg';
 import pet1G2 from '../assets/images/pets/1-gallery-2.jpg';
@@ -19,6 +21,20 @@ import pet7Main from '../assets/images/pets/7-main.jpg';
 
 import shelter1Img from '../assets/images/shelters/shelter-1.jpg';
 import shelter2Img from '../assets/images/shelters/shelter-2.jpg';
+*/
+
+const pet1Main = 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80';
+const pet1G1 = pet1Main;
+const pet1G2 = pet1Main;
+const pet1G3 = pet1Main;
+const pet2Main = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80';
+const pet3Main = 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80';
+const pet4Main = pet3Main;
+const pet5Main = 'https://images.unsplash.com/photo-1513245543132-31f507417b26?auto=format&fit=crop&w=800&q=80';
+const pet6Main = 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80';
+const pet7Main = 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=800&q=80';
+const shelter1Img = 'https://via.placeholder.com/150';
+const shelter2Img = 'https://via.placeholder.com/150';
 
 /** 宠物列表数据 */
 export const mockPets: Pet[] = [
