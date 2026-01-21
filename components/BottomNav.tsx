@@ -14,7 +14,13 @@ const BottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 px-4 pb-3">
+    <nav
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 px-4"
+      style={{
+        paddingBottom: 'max(40px, env(safe-area-inset-bottom))',
+        marginBottom: '8px'
+      }}
+    >
       {/* 毛玻璃导航容器 */}
       <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20 dark:border-gray-700/20 overflow-hidden">
 

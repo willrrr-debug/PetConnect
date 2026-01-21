@@ -54,10 +54,28 @@
     };
   </script>
   <style>
+    /* 移动端视口高度适配 */
+    :root {
+      --viewport-height: 100vh;
+      --viewport-height: 100dvh;
+      /* Dynamic Viewport Height */
+    }
+
+    @supports (height: 100dvh) {
+      :root {
+        --viewport-height: 100dvh;
+      }
+    }
+
     body {
       /* Mobile-first constraints */
       min-height: 100vh;
-      min-height: 100dvh;
+      min-height: var(--viewport-height);
+    }
+
+    /* 安全区域底部内边距工具类 */
+    .pb-safe {
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
     }
 
     .no-scrollbar::-webkit-scrollbar {

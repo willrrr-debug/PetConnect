@@ -35,6 +35,18 @@ const AppContent: React.FC = () => {
   const publicPaths = ['/', '/login', '/register', '/reset-password'];
   const isPublicPath = publicPaths.includes(location.pathname);
 
+  // 路由守卫：只在确定未登录时才重定向，避免拦截正在登录的用户
+  const shouldBlockAccess = React.useMemo(() => {
+    // 如果还在初始化，不阻止（避免闪烁）
+    if (!initialized) return false;
+    // 如果是公开路径，不阻止
+    if (isPublicPath) return false;
+    // 如果已认证，不阻止
+    if (isAuthenticated) return false;
+    // 只有明确未认证且已初始化时，才阻止访问
+    return true;
+  }, [initialized, isAuthenticated, isPublicPath]);
+
   // 如果未初始化，显示加载占位（可选）
   if (!initialized) {
     return (
@@ -44,8 +56,7 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // 路由守卫：未登录且访问非公开页面 -> 跳转登录
-  if (!isAuthenticated && !isPublicPath) {
+  if (shouldBlockAccess) {
     return <Navigate to="/login" replace />;
   }
 

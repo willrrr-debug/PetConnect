@@ -4,13 +4,44 @@ import { useApp } from '../context';
 
 const LoginScreen: React.FC = () => {
   const navigate = useNavigate();
-  const { login, loading, sendPasswordResetEmail } = useApp();
+  const { login, loading, sendPasswordResetEmail, loginWithOtp, verifyOtp } = useApp();
 
+  const [loginMode, setLoginMode] = useState<'password' | 'otp'>('password');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otpToken, setOtpToken] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState('');
   const [resetSent, setResetSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleSendOtp = async () => {
+    if (!email.trim()) {
+      setError('请输入邮箱地址');
+      return;
+    }
+    setError('');
+    const result = await loginWithOtp(email);
+    if (result.success) {
+      setOtpSent(true);
+    } else {
+      setError(result.error || '发送验证码失败');
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otpToken.trim() || otpToken.length !== 8) {
+      setError('请输入完整的8位验证码');
+      return;
+    }
+    setError('');
+    const result = await verifyOtp(email, otpToken);
+    if (result.success) {
+      navigate('/home');
+    } else {
+      setError(result.error || '验证码错误');
+    }
+  };
 
   const handleForgotPassword = async () => {
     if (!email.trim()) {
@@ -31,50 +62,73 @@ const LoginScreen: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (!email.trim()) {
-      setError('请输入邮箱');
-      return;
-    }
-    if (!password) {
-      setError('请输入密码');
-      return;
-    }
+    if (loginMode === 'password') {
+      // 密码登录
+      if (!email.trim()) {
+        setError('请输入邮箱');
+        return;
+      }
+      if (!password) {
+        setError('请输入密码');
+        return;
+      }
 
-    const result = await login(email, password);
+      console.log('开始登录...', { email, passwordLength: password.length });
 
-    if (result.success) {
-      navigate('/home');
+      try {
+        const result = await login(email, password);
+        console.log('登录结果:', result);
+
+        if (result.success) {
+          console.log('登录成功，准备跳转...');
+          // 等待状态完全更新
+          setTimeout(() => {
+            navigate('/home');
+          }, 300);
+        } else {
+          console.error('登录失败:', result.error);
+          setError(result.error || '登录失败，请检查邮箱和密码');
+        }
+      } catch (err) {
+        console.error('登录异常:', err);
+        setError('登录过程中出现异常，请稍后重试');
+      }
     } else {
-      setError(result.error || '登录失败');
+      // 验证码登录
+      if (!otpSent) {
+        // 发送验证码
+        await handleSendOtp();
+      } else {
+        // 验证OTP
+        await handleVerifyOtp();
+      }
     }
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#FFF9F5] font-sans">
+    <div className="relative h-screen overflow-y-auto bg-[#FFF9F5] font-sans">
       {/* 背景装饰 */}
       <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-[#FFB8A3]/20 to-transparent blur-3xl"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tl from-[#FF9671]/15 to-transparent blur-3xl"></div>
 
       {/* 头像区域 */}
-      <div className="relative pt-16 pb-6 flex flex-col items-center z-10">
+      <div className="relative pt-8 pb-4 flex flex-col items-center z-10">
         {/* 玻璃态头像容器 */}
         <div className="relative">
-          <div className="w-36 h-36 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl shadow-[#FFB8A3]/20 p-1.5 animate-float">
+          <div className="w-28 h-28 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl shadow-[#FFB8A3]/20 p-1.5 animate-float">
             <div
               className="w-full h-full rounded-full bg-cover bg-center"
               style={{ backgroundImage: "url('/images/cat-background.png')" }}
             />
           </div>
-          {/* 装饰光环 */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FFB8A3]/30 to-[#FF9671]/30 opacity-0 group-hover:opacity-100 blur-xl transition-opacity"></div>
         </div>
 
         {/* 标题 */}
-        <div className="mt-8 text-center px-6">
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#4A3728]">
+        <div className="mt-4 text-center px-6">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#4A3728]">
             寻找您的完美伙伴
           </h1>
-          <p className="text-base text-[#8B7355] mt-2 font-medium">
+          <p className="text-sm text-[#8B7355] mt-1 font-medium">
             连接每一次美丽的心动
           </p>
         </div>
@@ -83,7 +137,7 @@ const LoginScreen: React.FC = () => {
       {/* 表单区域 */}
       <div className="relative z-20 px-8 pb-8">
         {/* 登录/注册切换 */}
-        <div className="flex items-end gap-6 mb-8">
+        <div className="flex items-end gap-6 mb-4">
           <button className="text-3xl font-black text-[#4A3728] relative pb-2">
             登录
             <span className="absolute bottom-0 left-0 w-10 h-1.5 bg-gradient-to-r from-[#FFB8A3] to-[#FF9671] rounded-full"></span>
@@ -93,6 +147,37 @@ const LoginScreen: React.FC = () => {
             className="text-xl font-bold text-[#A08E81] hover:text-[#8B7355] transition-colors pb-2.5"
           >
             注册
+          </button>
+        </div>
+
+        {/* 登录方式切换 */}
+        <div className="flex gap-2 mb-6 p-1 bg-white/60 backdrop-blur-sm rounded-xl">
+          <button
+            type="button"
+            onClick={() => {
+              setLoginMode('password');
+              setOtpSent(false);
+              setError('');
+            }}
+            className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${loginMode === 'password'
+              ? 'bg-gradient-to-r from-[#FFB8A3] to-[#FF9671] text-white shadow-md'
+              : 'text-[#A08E81] hover:text-[#8B7355]'
+              }`}
+          >
+            密码登录
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setLoginMode('otp');
+              setError('');
+            }}
+            className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${loginMode === 'otp'
+              ? 'bg-gradient-to-r from-[#FFB8A3] to-[#FF9671] text-white shadow-md'
+              : 'text-[#A08E81] hover:text-[#8B7355]'
+              }`}
+          >
+            验证码登录
           </button>
         </div>
 
@@ -113,7 +198,7 @@ const LoginScreen: React.FC = () => {
         )}
 
         {/* 表单 */}
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-3" onSubmit={handleSubmit}>
           {/* 邮箱输入 */}
           <div className="group">
             <label className="block text-xs font-bold text-[#8B7355] uppercase tracking-wider mb-2 pl-1">
@@ -131,55 +216,82 @@ const LoginScreen: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loginMode === 'otp' && otpSent}
               />
             </div>
           </div>
 
-          {/* 密码输入 */}
-          <div className="group">
-            <label className="block text-xs font-bold text-[#8B7355] uppercase tracking-wider mb-2 pl-1">
-              密码
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="text-[#A08E81] group-focus-within:text-[#FFB8A3] transition-colors text-xl">
-                  🔒
-                </span>
+          {loginMode === 'password' ? (
+            <>
+              {/* 密码输入 */}
+              <div className="group">
+                <label className="block text-xs font-bold text-[#8B7355] uppercase tracking-wider mb-2 pl-1">
+                  密码
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span className="text-[#A08E81] group-focus-within:text-[#FFB8A3] transition-colors text-xl">
+                      🔒
+                    </span>
+                  </div>
+                  <input
+                    className="block w-full pl-12 pr-12 py-4 bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/20 rounded-xl text-[#4A3728] font-semibold placeholder-[#C4B5A0] focus:ring-2 focus:ring-[#FFB8A3]/50 focus:border-[#FFB8A3] focus:bg-white transition-all shadow-sm hover:shadow-md"
+                    placeholder="请输入密码"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#A08E81] hover:text-[#8B7355] transition-colors"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <span className="text-lg">
+                      {showPassword ? '👁️' : '🙈'}
+                    </span>
+                  </button>
+                </div>
               </div>
-              <input
-                className="block w-full pl-12 pr-12 py-4 bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/20 rounded-xl text-[#4A3728] font-semibold placeholder-[#C4B5A0] focus:ring-2 focus:ring-[#FFB8A3]/50 focus:border-[#FFB8A3] focus:bg-white transition-all shadow-sm hover:shadow-md"
-                placeholder="请输入密码"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#A08E81] hover:text-[#8B7355] transition-colors"
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                <span className="text-lg">
-                  {showPassword ? '👁️' : '🙈'}
-                </span>
-              </button>
-            </div>
-          </div>
 
-          {/* 忘记密码 */}
-          <div className="flex justify-end pt-1">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-sm font-bold text-[#A08E81] hover:text-[#FFB8A3] transition-colors"
-            >
-              忘记密码?
-            </button>
-          </div>
+              {/* 忘记密码 */}
+              <div className="flex justify-end pt-1">
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="text-sm font-bold text-[#A08E81] hover:text-[#FFB8A3] transition-colors"
+                >
+                  忘记密码?
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* 验证码输入 */}
+              {otpSent && (
+                <div className="group">
+                  <label className="block text-xs font-bold text-[#8B7355] uppercase tracking-wider mb-2 pl-1">
+                    验证码
+                  </label>
+                  <div className="relative">
+                    <input
+                      className="block w-full px-4 py-4 bg-white/80 backdrop-blur-sm border border-[#FFB8A3]/20 rounded-xl text-[#4A3728] font-bold placeholder-[#C4B5A0] focus:ring-2 focus:ring-[#FFB8A3]/50 focus:border-[#FFB8A3] focus:bg-white transition-all shadow-sm hover:shadow-md text-center text-3xl tracking-[0.5em] font-mono"
+                      placeholder="00000000"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={8}
+                      value={otpToken}
+                      onChange={(e) => setOtpToken(e.target.value.replace(/\D/g, ''))}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
 
           {/* 登录按钮 */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (loginMode === 'password' && (!email.trim() || !password))}
             className="group relative w-full bg-gradient-to-r from-[#FFB8A3] to-[#FF9671] hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-lg py-4 rounded-2xl shadow-xl shadow-[#FFB8A3]/40 active:scale-[0.98] transition-all mt-6 flex items-center justify-center gap-2 overflow-hidden"
           >
             {/* 按钮光效 */}
@@ -189,11 +301,11 @@ const LoginScreen: React.FC = () => {
               {loading ? (
                 <>
                   <span className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  登录中...
+                  {loginMode === 'otp' && !otpSent ? '发送中...' : loginMode === 'otp' ? '验证中...' : '登录中...'}
                 </>
               ) : (
                 <>
-                  登录
+                  {loginMode === 'password' ? '登录' : otpSent ? '验证并登录' : '发送验证码'}
                   <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
                 </>
               )}

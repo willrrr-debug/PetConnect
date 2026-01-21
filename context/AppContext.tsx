@@ -40,6 +40,10 @@ interface AppContextType extends AppState {
     logout: () => Promise<void>;
     /** 发送重置密码邮件 */
     sendPasswordResetEmail: (email: string) => Promise<{ success: boolean; error: string | null }>;
+    /** 邮箱验证码登录/注册 */
+    loginWithOtp: (email: string) => Promise<{ success: boolean; error: string | null }>;
+    /** 验证邮箱 OTP */
+    verifyOtp: (email: string, token: string) => Promise<{ success: boolean; error: string | null }>;
     /** 添加收藏 */
     addFavorite: (petId: string) => Promise<void>;
     /** 移除收藏 */
@@ -172,17 +176,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         if (isSupabaseConfigured) {
             const { data: { subscription } } = onAuthStateChange(async (user) => {
                 if (user) {
-                    const profile = await fetchProfile(user.id);
-                    const favorites = await fetchFavorites(user.id);
+                    // 立即标记为已认证
+                    setState(prev => ({ ...prev, user, isAuthenticated: true, initialized: true }));
 
-                    setState((prev) => ({
-                        ...prev,
-                        user,
-                        profile,
-                        isAuthenticated: true,
-                        favorites,
-                        loading: false,
-                    }));
+                    // 后台拉取资料
+                    fetchProfile(user.id).then(profile => {
+                        setState(prev => ({ ...prev, profile }));
+                    });
+                    fetchFavorites(user.id).then(favorites => {
+                        setState(prev => ({ ...prev, favorites }));
+                    });
                 } else {
                     setState((prev) => ({
                         ...prev,
@@ -190,6 +193,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                         profile: null,
                         isAuthenticated: false,
                         favorites: [],
+                        initialized: true,
                         loading: false,
                     }));
                 }
@@ -231,16 +235,37 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             return { success: true, error: null };
         }
 
-        // Supabase 模式
-        const { error } = await signIn(email, password);
+        // Supabase模式
+        const { user, error } = await signIn(email, password);
 
         if (error) {
             setState((prev) => ({ ...prev, loading: false }));
             return { success: false, error: error.message };
         }
 
+        // 登录成功，立即标记为已认证，防止路由守卫拦截
+        if (user) {
+            setState((prev) => ({
+                ...prev,
+                user,
+                isAuthenticated: true,
+                loading: false
+            }));
+
+            // 在后台获取详情，不阻塞跳转
+            fetchProfile(user.id).then(profile => {
+                setState(prev => ({ ...prev, profile }));
+            }).catch(err => console.warn('Profile fetch background fail:', err));
+
+            fetchFavorites(user.id).then(favorites => {
+                setState(prev => ({ ...prev, favorites }));
+            }).catch(err => console.warn('Favorites fetch background fail:', err));
+        } else {
+            setState((prev) => ({ ...prev, isAuthenticated: true, loading: false }));
+        }
+
         return { success: true, error: null };
-    }, []);
+    }, [fetchProfile, fetchFavorites]);
 
     // 注册
     const register = useCallback(async (email: string, password: string, name: string) => {
@@ -302,6 +327,66 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
         const { error } = await authResetPassword(email);
         return { success: !error, error: error?.message || null };
+    }, []);
+
+    // 邮箱验证码登录/注册
+    const loginWithOtp = useCallback(async (email: string) => {
+        setState((prev) => ({ ...prev, loading: true }));
+
+        if (!isSupabaseConfigured) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setState((prev) => ({ ...prev, loading: false }));
+            return { success: true, error: null };
+        }
+
+        const { error } = await supabase.auth.signInWithOtp({
+            email,
+            options: {
+                shouldCreateUser: true,
+            },
+        });
+
+        setState((prev) => ({ ...prev, loading: false }));
+        return { success: !error, error: error?.message || null };
+    }, []);
+
+    // 验证邮箱 OTP
+    const verifyOtp = useCallback(async (email: string, token: string) => {
+        setState((prev) => ({ ...prev, loading: true }));
+
+        if (!isSupabaseConfigured) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            localStorage.setItem('petconnect_auth', 'true');
+            setState((prev) => ({
+                ...prev,
+                profile: {
+                    id: mockCurrentUser.id,
+                    name: mockCurrentUser.name,
+                    avatarUrl: mockCurrentUser.avatar,
+                    phone: mockCurrentUser.phone || null,
+                    verified: mockCurrentUser.verified,
+                },
+                isAuthenticated: true,
+                loading: false,
+            }));
+            return { success: true, error: null };
+        }
+
+        const { data: { session }, error } = await supabase.auth.verifyOtp({
+            email,
+            token,
+            type: 'email',
+        });
+
+        setState((prev) => ({ ...prev, loading: false }));
+
+        if (error) {
+            return { success: false, error: error.message };
+        }
+
+        // 验证成功，等待 onAuthStateChange 更新状态
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return { success: true, error: null };
     }, []);
 
     // 刷新收藏列表
@@ -377,6 +462,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         register,
         logout,
         sendPasswordResetEmail,
+        loginWithOtp,
+        verifyOtp,
         addFavorite,
         removeFavorite,
         toggleFavorite,
