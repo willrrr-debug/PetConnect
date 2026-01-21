@@ -15,11 +15,11 @@ export const mockPets: Pet[] = [
         age: '2岁',
         gender: 'male',
         weight: '65磅',
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDiPoSXxeAmwXX64LAmWPvtmvbsfYt9pj4A7VCK0PHqER2A6IYXJzEJL-RJIrohMNZzbv9Xsh8Y_d4XQKJ2WSwIOR7aYAgDdi2l94womrJXF6mjO5ohxKeOaffDenloX1VwOmsb4O28pNhmWSrhkqrwiYsrubq51rPF_NU0QuR37JCYVtUZxbacrm1qzqC55XdLkU8063LgiDL4YUxYMiEwxEBUxvaQnNIW4mnO4rhW5xe-dJn7wEOtmYv9VnzDG9h7RjEln6fEd4o',
+        imageUrl: '/images/pets/1-main.jpg',
         images: [
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuDDNgVh4DJGy5DBClF4Ko4pufTG4XNUn05LjLauMrm98gcAJmjpGVMXR9msmyEG0TICn_4U7Gy-j_Jal0wNDgH-QYkICKC7N57GlcC1h4eU7yB_7F38RQPAGmW5E3LD7deIBIhZI53RY9e8RwJgQwtedtbuyEe3iGu0VwSEYSsUsZqkFwHCAHLmcUFsIaBiPcgFwHT8vFg1B9qi03G0KfJBzgoSwunMUIrz-WTUHyK-bRx9RBiNOAxSjPZHGeg1v7NboIMVJ4Zia_s',
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuCuDOtM54eLmay-g12dbu3kb9bbFbZ2AXKuj02WdhAHIS0_dkBYK7UtyKkIZjM6O1m-RHjaMIOZBU-sySdHkl4IXP597-gpdESjhGttqBaZHi6TZV10sf5Yt0L4UDhc5DT4qlq8uVwAVYPZcSDdfyXHMWZ1nNVrjZIVHOK7VjmUtF5oAkcaJlPi5Q30gxxheGoYaJxMroDw3kjVnWF5UrKtEo1smIZgiIGvWi31iysURDNeJzyLdUocIt9wwdhxMlbuEqqsKee0Mns',
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuDG0WE_gwVQX5Pb_v5ICXS7qXsaxuGpBnR2EiAz2DAusFsOTeWR47eBFi5_o4xw1O9w6NISW6ye6O8q2n5BHNer1pgXmcFQMSxmrChOX3r39amp17kcsEwHRDv17ofYA9P4eM7OzTxQQNy5L1wOsF2KPHgoI5lnH8m9jzfLg4Lg2EBzOMt0eBnFuWL5cOVXGowaFsKUZEZ5Fp9n2hjbwbvhyhTdg4fTn7xduTTbxA_Bb0wBJ-Rdc71U9fuvxctJapokbNjrrGA7MIU',
+            '/images/pets/1-gallery-1.jpg',
+            '/images/pets/1-gallery-2.jpg',
+            '/images/pets/1-gallery-3.jpg',
         ],
         distance: '2英里',
         description: '巴弟是个快乐的小家伙，喜欢长距离散步和肚皮按摩。他被发现流浪，但在我们的寄养团队中适应得很好。他已经学会了"坐下"，而且非常讨人喜欢！他有一颗金子般的心，正在寻找一个能让他成为焦点的永远的家。',
@@ -40,7 +40,7 @@ export const mockPets: Pet[] = [
         breed: '虎斑',
         age: '8月',
         gender: 'female',
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuClKKZ73rFT8yg9ktxhuLkoRWh5Yx8bJFEDXC_J25ykpKp2QhVzolTg1iSo8gznQ33e4-INvZm0mQuDgpq5KqrzAw28eieJrseZaed2y4zBdzYeK0ttDfftC-FbD1qN_YSuaJdoRnTjXK6L9b30yxHjebYnx7_i2YHtvMy27EULFjyK7Nr7UECBGZyYZnga4HZFyKvPoYgMc0_Cw2sIx9nELPogJJBi6aBKiZkCEUqvTACvFQFAT3QAW2OwSutv98zHumQRMnRtBXk',
+        imageUrl: '/images/pets/2-main.jpg',
     },
     {
         id: '3',
@@ -49,7 +49,7 @@ export const mockPets: Pet[] = [
         breed: '寻回犬',
         age: '4月',
         gender: 'female',
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6wkG4U1EoItUWIiHx3_Rf1uyQ7SKDjNu0qrAZjtNXNB48j3uLomQu_7w6m18z9UNve26gaFroDrWk6JPUw0c7UPOUEm4R94xUbeGtjoJoUMpHStL7eUX-Xq0LmeE3B2zSEsBEQSBEw-5bzdP7rw4MSp8WDzNTLFuT6J234t9-vWykzsG1xX90rLOQnaasJanYkb1lyLdE5kkHegy_78innrReH_MCLOKXtsYn6vAt_wEO_wQWef-IDyUPpKO1kdqDbHWuFDUDI1Q',
+        imageUrl: '/images/pets/3-main.jpg',
     },
     {
         id: '4',
@@ -59,7 +59,7 @@ export const mockPets: Pet[] = [
         age: '3岁',
         gender: 'male',
         distance: '1.2 km',
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCcTGe7DgGuf0M-EXwYaBjE-bKuZg53PVv4k82kSVPGyDG_rLS5DNezvFh5dtKXF1CbGewdoAQyLlKrb8Pd3q1BTqNrd634I67-1krfxex1i0FYl4YROkBtbJPzAJuNi1idIBMAV00JNDczEDapYjJolWcuwXR81D662tmv3GweRkbxApazU_Gwe7nmkAdk0y2LjAkQmXwJ2y_pw2OBTarfrqhFL7QXZIr-W1yUvzYLjNU9LIC16cjt4ynY3GGzupKJtYLZ9-HThzc',
+        imageUrl: '/images/pets/4-main.jpg',
     },
     {
         id: '5',
@@ -69,7 +69,7 @@ export const mockPets: Pet[] = [
         age: '1岁',
         gender: 'female',
         distance: '2.5 km',
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB7W_vs2Xe_HI4vs0hTdtKRbEnVm0gPK2cP2sO3n8V0z17uVTpwq3LPNfUngsgKKaM33XBZOiAxC8TlIgg1VWwvtXnUGLTnj_P3jRgG1j6YXLzsNx5-0_y4Ra8GqTJrhlfFzzV5rByq31xoJ-pf27eNPLvFxE5J3xe4CYsZ0CsraJA5Q7OJFWpMIADW5dDBU7VnlAr--BAZK7C0Iy6YD6sogAk4J-Nljbiug3x4WvWROJAqowckLKUsJyMRE162ig7jEiN22GBkwA8',
+        imageUrl: '/images/pets/5-main.jpg',
     },
     {
         id: '6',
@@ -79,7 +79,7 @@ export const mockPets: Pet[] = [
         age: '6个月',
         gender: 'female',
         distance: '0.8 km',
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDXtsLTHGz1r4YKI-YqhW7a1kGhYcRn73R9GMpsAjTB1rOEGplw33ZhGsnBvu5r57Skk1sEkZu3P6pSX2dZc0lkGxBinSFHZOgBZR2gPtUBEVYrsgCdHNpeB5iCrDwgjZR6PL7GTRM-jLKKwgfXr41-E1u4G9j2d9huqf3furWM7QbXgmqk8pB369y4JbBMhdff_Eeu4GJuIauJi9Pmli5puM8zU0vNaeGqsmc7T-o9vz7aR0_6rV6luTAAh_2Ym8mRnYS1s_fxxC4',
+        imageUrl: '/images/pets/6-main.jpg',
     },
     {
         id: '7',
@@ -89,7 +89,7 @@ export const mockPets: Pet[] = [
         age: '2岁',
         gender: 'male',
         distance: '4.2 km',
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBl3toi0-lNTgAwXFR93fb-CIjYhxhMeJJ2TgAwZ1K5jnZ4adCOQULcLV19rrojSU_EaKkjB73RhDVqIDzKV53Y0pSWgg20lNQz17-6Ci5Hl-USeIBr2Ma7pxMDG9qjZNCK_qw1YyBHxbQwfv2L870WDGBIyzW5U1IEvqNZcTkotjHlKYGV7SJzXy9ppNAc1QgK4zpV0A-1AWncAEZEHvhxP2wo1p-GhDsNbYwTTKfJmBYvYsycYu8HaJ53U5_0k8k8nlYbpU753DI',
+        imageUrl: '/images/pets/7-main.jpg',
     },
 ];
 
@@ -98,14 +98,14 @@ export const mockShelters: Shelter[] = [
     {
         id: 'shelter-1',
         name: '爪友救助站',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAiSZdcIx37MuXzrl8JtMk87Z_29AiywcYVWqjcHXsJSBqzuT-TOR9VKRWm5gbRdtvBLCCetC_7lr4SOj9Lc-KODx_Z-7pGTOhmVHiRp6DdGtBJybzNuAcj-2zALaZzsr9fLN4jUF0sPCE1G1XZ64kw7NAHsJaHIsI650WdycpSGCuKq_E0qAOLiEZNSydMySKJE3Bq-vUeIZiJF0tsJO5b1LDB1UYXsRtQySWDSQ5nW3esRnsLaQyE65p-jWV31NLc4iYho2T6-AA',
+        avatar: '/images/shelters/shelter-1.jpg',
         verified: true,
         location: '上海市',
     },
     {
         id: 'shelter-2',
         name: '快乐爪爪救助站',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDMjMgySDEP8OcmEfL0vs6qML5NYZsyRYy9SmUAd_iwRgEvOlYRokUcDwt-AAdoj5eb36sgG-XZ6q8FMcivrnc7hjvtJN_TndeJKGcyxEdAfcInRzGd-m2GAGiFjQRy4JPjn8soh1B2BpuRQhS5g6Edl7iUUhZcvN8VJW-ZLKncoGvz_Y_7RogLkl2kjxURIks1I3Bxg9Dh5IfCYaW6pPg5K0wPmnc44vF2pf6SaNmNRRBRZqin25j0OV6l9fAmPoLJVFLpzyYChBY',
+        avatar: '/images/shelters/shelter-2.jpg',
         verified: true,
         location: '上海市',
     },
