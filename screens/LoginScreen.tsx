@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context';
 
 const LoginScreen: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, loading, sendPasswordResetEmail, loginWithOtp, verifyOtp } = useApp();
 
   const [loginMode, setLoginMode] = useState<'password' | 'otp'>('password');
@@ -14,6 +15,17 @@ const LoginScreen: React.FC = () => {
   const [error, setError] = useState('');
   const [resetSent, setResetSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // 预填写逻辑
+  useEffect(() => {
+    const state = location.state as { email?: string; password?: string } | null;
+    if (state?.email) {
+      setEmail(state.email);
+    }
+    if (state?.password) {
+      setPassword(state.password);
+    }
+  }, [location.state]);
 
   const handleSendOtp = async () => {
     if (!email.trim()) {

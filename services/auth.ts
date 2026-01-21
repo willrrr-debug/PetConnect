@@ -38,14 +38,6 @@ export async function signUp(
             return { user: null, error: { message: error.message, code: error.code } };
         }
 
-        // 创建用户资料
-        if (data.user) {
-            await supabase.from('profiles').insert({
-                id: data.user.id,
-                name: name,
-            } as any);
-        }
-
         return { user: data.user, error: null };
     } catch (err) {
         return { user: null, error: { message: '注册失败，请稍后重试' } };

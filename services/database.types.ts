@@ -13,6 +13,8 @@ export interface Database {
                     avatar_url: string | null;
                     phone: string | null;
                     verified: boolean;
+                    bio: string | null;
+                    location: string | null;
                     created_at: string;
                 };
                 Insert: {
@@ -21,6 +23,8 @@ export interface Database {
                     avatar_url?: string | null;
                     phone?: string | null;
                     verified?: boolean;
+                    bio?: string | null;
+                    location?: string | null;
                     created_at?: string;
                 };
                 Update: {
@@ -29,6 +33,8 @@ export interface Database {
                     avatar_url?: string | null;
                     phone?: string | null;
                     verified?: boolean;
+                    bio?: string | null;
+                    location?: string | null;
                     created_at?: string;
                 };
             };

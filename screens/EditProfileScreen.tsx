@@ -1,18 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context';
 import { getAvatarUrl } from '../utils/avatar';
+import { uploadAvatar } from '../services/storage';
 
 const EditProfileScreen: React.FC = () => {
     const navigate = useNavigate();
-    const { profile, user } = useApp();
+    const { profile, user, updateProfile } = useApp();
     const [name, setName] = useState(profile?.name || '萌宠用户');
-    const [bio, setBio] = useState('宠物爱好者，希望能为更多流浪动物找到家。');
-    const [location, setLocation] = useState('上海');
+    const [bio, setBio] = useState(profile?.bio || '宠物爱好者，希望能为更多流浪动物找到家。');
+    const [location, setLocation] = useState(profile?.location || '上海');
+    const [isSaving, setIsSaving] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
-    const handleSave = () => {
-        alert('个人信息已更新！');
-        navigate(-1);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user) return;
+
+        setIsUploading(true);
+        const { url, error } = await uploadAvatar(user.id, file);
+
+        if (error) {
+            alert('上传头像失败: ' + error);
+        } else if (url) {
+            const result = await updateProfile({ avatarUrl: url });
+            if (!result.success) {
+                alert('更新头像记录失败: ' + result.error);
+            }
+        }
+        setIsUploading(false);
+    };
+
+    const handleSave = async () => {
+        if (!name.trim()) {
+            alert('昵称不能为空');
+            return;
+        }
+
+        setIsSaving(true);
+        const result = await updateProfile({
+            name,
+            bio,
+            location
+        });
+
+        setIsSaving(false);
+
+        if (result.success) {
+            alert('个人信息已更新！');
+            navigate(-1);
+        } else {
+            alert('保存失败: ' + result.error);
+        }
     };
 
     return (
@@ -29,24 +74,38 @@ const EditProfileScreen: React.FC = () => {
                     <h2 className="flex-1 text-center text-lg font-bold">编辑资料</h2>
                     <button
                         onClick={handleSave}
-                        className="text-primary font-bold px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
+                        disabled={isSaving || isUploading}
+                        className="text-primary font-bold px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors disabled:opacity-50"
                     >
-                        保存
+                        {isSaving ? '保存中...' : '保存'}
                     </button>
                 </div>
 
                 <div className="flex flex-col items-center px-6 pt-8 gap-10">
                     {/* Avatar Edit */}
-                    <div className="relative group cursor-pointer">
+                    <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
                         <div
-                            className="bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 shadow-lg ring-4 ring-white dark:ring-surface-dark transition-transform bg-gray-100"
+                            className="bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 shadow-lg ring-4 ring-white dark:ring-surface-dark transition-transform bg-gray-100 flex items-center justify-center overflow-hidden"
                             style={{ backgroundImage: `url('${getAvatarUrl(profile?.id || user?.id, profile?.avatarUrl)}')` }}
                         >
-                            <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+                            <div className={`absolute inset-0 bg-black/30 rounded-full flex items-center justify-center transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                                {isUploading ? (
+                                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
+                                ) : (
+                                    <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+                                )}
                             </div>
                         </div>
-                        <p className="text-primary text-sm font-bold mt-3 text-center">更换头像</p>
+                        <p className="text-primary text-sm font-bold mt-3 text-center">
+                            {isUploading ? '上传中...' : '更换头像'}
+                        </p>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                        />
                     </div>
 
                     {/* Form */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { AppProvider } from './context';
 import MobileLayout from './components/MobileLayout';
 import BottomNav from './components/BottomNav';
@@ -30,6 +30,7 @@ import { useApp } from './context/AppContext';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { isAuthenticated, initialized } = useApp();
 
   const publicPaths = ['/', '/login', '/register', '/reset-password'];
@@ -46,6 +47,17 @@ const AppContent: React.FC = () => {
     // 只有明确未认证且已初始化时，才阻止访问
     return true;
   }, [initialized, isAuthenticated, isPublicPath]);
+
+  // 已登录用户访问公开页面（登录/注册）时，自动跳转到首页
+  React.useEffect(() => {
+    if (initialized && isAuthenticated && isPublicPath && location.pathname !== '/') {
+      // 这里的 100ms 延迟是为了给 context 状态同步一点缓冲区，防止极速跳转导致的组件渲染冲突
+      const timer = setTimeout(() => {
+        navigate('/home', { replace: true });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [initialized, isAuthenticated, isPublicPath, location.pathname, navigate]);
 
   // 如果未初始化，显示加载占位（可选）
   if (!initialized) {

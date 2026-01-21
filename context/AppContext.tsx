@@ -11,6 +11,8 @@ interface UserProfile {
     name: string;
     avatarUrl: string | null;
     phone: string | null;
+    bio: string | null;
+    location: string | null;
     verified: boolean;
 }
 
@@ -43,7 +45,7 @@ interface AppContextType extends AppState {
     /** 邮箱验证码登录/注册 */
     loginWithOtp: (email: string) => Promise<{ success: boolean; error: string | null }>;
     /** 验证邮箱 OTP */
-    verifyOtp: (email: string, token: string) => Promise<{ success: boolean; error: string | null }>;
+    verifyOtp: (email: string, token: string, type?: 'signup' | 'email' | 'recovery' | 'magiclink') => Promise<{ success: boolean; error: string | null }>;
     /** 添加收藏 */
     addFavorite: (petId: string) => Promise<void>;
     /** 移除收藏 */
@@ -54,6 +56,8 @@ interface AppContextType extends AppState {
     isFavorited: (petId: string) => boolean;
     /** 刷新收藏列表 */
     refreshFavorites: () => Promise<void>;
+    /** 更新用户资料 */
+    updateProfile: (updates: Partial<UserProfile>) => Promise<{ success: boolean; error: string | null }>;
 }
 
 // ============ Context 创建 ============
@@ -95,6 +99,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                 name: profileData.name,
                 avatarUrl: profileData.avatar_url,
                 phone: profileData.phone,
+                bio: profileData.bio,
+                location: profileData.location,
                 verified: profileData.verified,
             };
         }
@@ -128,6 +134,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                         name: mockCurrentUser.name,
                         avatarUrl: mockCurrentUser.avatar,
                         phone: mockCurrentUser.phone || null,
+                        bio: '宠物爱好者，希望能为更多流浪动物找到家。',
+                        location: '上海',
                         verified: mockCurrentUser.verified,
                     } : null,
                     isAuthenticated: savedAuth === 'true',
@@ -298,6 +306,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             return { success: false, error: error.message };
         }
 
+        // 注册成功后，Supabase 可能会自动登录（取决于配置）
+        // 显式关闭 loading 状态
+        setState((prev) => ({ ...prev, loading: false }));
+
         return { success: true, error: null };
     }, []);
 
@@ -351,7 +363,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }, []);
 
     // 验证邮箱 OTP
-    const verifyOtp = useCallback(async (email: string, token: string) => {
+    const verifyOtp = useCallback(async (email: string, token: string, type: 'signup' | 'email' | 'recovery' | 'magiclink' = 'email') => {
         setState((prev) => ({ ...prev, loading: true }));
 
         if (!isSupabaseConfigured) {
@@ -364,6 +376,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                     name: mockCurrentUser.name,
                     avatarUrl: mockCurrentUser.avatar,
                     phone: mockCurrentUser.phone || null,
+                    bio: '宠物爱好者，希望能为更多流浪动物找到家。',
+                    location: '上海',
                     verified: mockCurrentUser.verified,
                 },
                 isAuthenticated: true,
@@ -375,7 +389,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         const { data: { session }, error } = await supabase.auth.verifyOtp({
             email,
             token,
-            type: 'email',
+            type,
         });
 
         setState((prev) => ({ ...prev, loading: false }));
@@ -396,6 +410,49 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             setState((prev) => ({ ...prev, favorites }));
         }
     }, [state.user, state.isMockMode, fetchFavorites]);
+
+    // 更新用户资料
+    const updateProfile = useCallback(async (updates: Partial<UserProfile>) => {
+        if (!state.isAuthenticated) return { success: false, error: '请先登录' };
+
+        // Mock 模式
+        if (!isSupabaseConfigured) {
+            setState(prev => {
+                const newProfile = prev.profile ? { ...prev.profile, ...updates } : null;
+                return { ...prev, profile: newProfile };
+            });
+            return { success: true, error: null };
+        }
+
+        // Supabase 模式
+        try {
+            if (!state.user) throw new Error('用户未登录');
+
+            const { error } = await (supabase as any)
+                .from('profiles')
+                .update({
+                    name: updates.name,
+                    avatar_url: updates.avatarUrl,
+                    phone: updates.phone,
+                    bio: updates.bio,
+                    location: updates.location,
+                })
+                .eq('id', state.user.id);
+
+            if (error) throw error;
+
+            // 更新本地状态
+            setState(prev => ({
+                ...prev,
+                profile: prev.profile ? { ...prev.profile, ...updates } : null
+            }));
+
+            return { success: true, error: null };
+        } catch (err: any) {
+            console.error('Update profile error:', err);
+            return { success: false, error: err.message };
+        }
+    }, [state.isAuthenticated, state.user]);
 
     // 添加收藏
     const addFavorite = useCallback(async (petId: string) => {
@@ -469,6 +526,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         toggleFavorite,
         isFavorited,
         refreshFavorites,
+        updateProfile,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

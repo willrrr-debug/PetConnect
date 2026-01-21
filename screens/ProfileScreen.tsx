@@ -43,11 +43,26 @@ const ProfileScreen: React.FC = () => {
         <h1 className="text-text-main dark:text-white text-2xl font-bold leading-tight tracking-tight text-center mb-1">
           {profile?.name || '萌宠用户'}
         </h1>
-        <div className="flex items-center gap-1.5 bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-full mt-1">
-          <span className="material-symbols-outlined text-primary text-lg filled">verified</span>
-          <p className="text-primary text-sm font-semibold leading-normal">
-            {profile?.verified ? '已认证领养人' : '普通用户'}
+        {profile?.bio && (
+          <p className="text-text-secondary dark:text-gray-400 text-sm text-center px-10 mt-1 line-clamp-2">
+            {profile.bio}
           </p>
+        )}
+        <div className="flex flex-wrap justify-center items-center gap-2 mt-3">
+          <div className="flex items-center gap-1.5 bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-full">
+            <span className="material-symbols-outlined text-primary text-sm filled">verified</span>
+            <p className="text-primary text-xs font-semibold">
+              {profile?.verified ? '已认证领养人' : '普通用户'}
+            </p>
+          </div>
+          {profile?.location && (
+            <div className="flex items-center gap-1 bg-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">
+              <span className="material-symbols-outlined text-gray-400 text-sm">location_on</span>
+              <p className="text-text-secondary dark:text-gray-400 text-xs font-medium">
+                {profile.location}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
